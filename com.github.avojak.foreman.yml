@@ -1,0 +1,53 @@
+app-id: com.github.avojak.foreman
+
+runtime: io.elementary.Platform
+runtime-version: '7'
+sdk: io.elementary.Sdk
+
+command: com.github.avojak.foreman
+
+finish-args:
+  - '--share=ipc'
+  - '--share=network'
+  - '--socket=fallback-x11'
+  - '--socket=wayland'
+  - '--filesystem=home' # Temporary
+  - '--env=PATH=/app/jdk/bin:/app/bin:/usr/bin'
+
+modules:
+  - name: bootstrap-jdk
+    buildsystem: simple
+    cleanup:
+      - '*'
+    sources:
+      - type: file
+        only-arches:
+          - x86_64
+        url: https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz
+        sha256: 0022753d0cceecacdd3a795dd4cea2bd7ffdf9dc06e22ffd1be98411742fbb44
+        dest-filename: openjdk.tar.gz
+      - type: file
+        only-arches:
+          - aarch64
+        url: https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-aarch64_bin.tar.gz
+        sha256: 13bfd976acf8803f862e82c7113fb0e9311ca5458b1decaef8a09ffd91119fa4
+        dest-filename: openjdk.tar.gz
+    build-commands:
+      - mkdir -p $FLATPAK_DEST/bootstrap-java
+      - tar -xf openjdk.tar.gz --directory=$FLATPAK_DEST/bootstrap-java
+    post-install:
+      - cd $FLATPAK_DEST/bootstrap-java && ln -s jdk-17.0.2 jdk
+
+  - name: openjdk
+    buildsystem: simple
+    build-commands:
+      # TODO: Why are all the JDK modules required? Without it we get "java.lang.IllegalStateException: No jar file system provider found" when starting the server
+      # - $FLATPAK_DEST/bootstrap-java/jdk/bin/jlink --no-header-files --no-man-pages --compress=2 --add-modules $($FLATPAK_DEST/bootstrap-java/jdk/bin/java --list-modules | grep -v 'jdk.' | cut -d '@' -f 1 | xargs | sed -e 's/\s/,/g') --output jre
+      - $FLATPAK_DEST/bootstrap-java/jdk/bin/jlink --no-header-files --no-man-pages --compress=2 --add-modules $($FLATPAK_DEST/bootstrap-java/jdk/bin/java --list-modules | cut -d '@' -f 1 | xargs | sed -e 's/\s/,/g') --output jdk
+      - mv jdk $FLATPAK_DEST/jdk
+
+  - name: foreman
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .

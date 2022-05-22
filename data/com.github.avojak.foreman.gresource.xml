@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/github/avojak/foreman">
+    <file alias="WelcomeView.css" compressed="true">styles/WelcomeView.css</file>
+    <file alias="AlertView.css" compressed="true">styles/AlertView.css</file>
+  </gresource>
+</gresources>

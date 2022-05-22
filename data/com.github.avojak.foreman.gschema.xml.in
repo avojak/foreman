@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="@schema-path@" id="@appid@">
+    <key name="prefer-dark-style" type="b">
+      <default>false</default>
+      <summary>If the dark Gtk stylesheet should be used</summary>
+      <description>If the dark Gtk stylesheet should be used</description>
+    </key>
+    <key name="pos-x" type="i">
+      <default>360</default>
+      <summary>The saved horizontal position of the window</summary>
+      <description>The saved horizontal position of the window</description>
+    </key>
+    <key name="pos-y" type="i">
+      <default>360</default>
+      <summary>The saved vertical position width of the window</summary>
+      <description>The saved vertical position of the window</description>
+    </key>
+    <key name="window-width" type="i">
+      <default>800</default>
+      <summary>The saved width of the window</summary>
+      <description>The saved width of the window</description>
+    </key>
+    <key name="window-height" type="i">
+      <default>600</default>
+      <summary>The saved height of the window</summary>
+      <description>The saved height of the window</description>
+    </key>
+    <key name="use-internal-executable" type="b">
+      <default>true</default>
+      <summary>Whether or not to use an internally managed server executable</summary>
+      <description>Whether or not to use an internally managed server executable</description>
+    </key>
+    <key name="user-server-executable-path" type="s">
+      <default>""</default>
+      <summary>The path to the user-provided server executable</summary>
+      <description>The path to the user-provided server executable</description>
+    </key>
+    <key name="server-version" type="s">
+      <default>""</default>
+      <summary>The current version of the server to use</summary>
+      <description>The current version of the server to use</description>
+    </key>
+    <!-- Default properties for a server -->
+    <!-- See: https://minecraft.fandom.com/wiki/Server.properties -->
+    <key name="allow-flight" type="b">
+      <default>false</default>
+      <summary>Allows users to use flight on the server while in Survival mode, if they have a mod that provides flight installed.</summary>
+      <description>Allows users to use flight on the server while in Survival mode, if they have a mod that provides flight installed.</description>
+    </key>
+    <key name="allow-nether" type="b">
+      <default>true</default>
+      <summary>Allows players to travel to the Nether.</summary>
+      <description>Allows players to travel to the Nether.</description>
+    </key>
+    <key name="broadcast-console-to-ops" type="b">
+      <default>true</default>
+      <summary>Send console command outputs to all online operators.</summary>
+      <description>Send console command outputs to all online operators.</description>
+    </key>
+    <key name="broadcast-rcon-to-ops" type="b">
+      <default>true</default>
+      <summary>Send rcon console command outputs to all online operators.</summary>
+      <description>Send rcon console command outputs to all online operators.</description>
+    </key>
+    <key name="difficulty" type="s">
+      <default>"EASY"</default>
+      <summary>Defines the difficulty (such as damage dealt by mobs and the way hunger and poison affects players) of the server.</summary>
+      <description>Defines the difficulty (such as damage dealt by mobs and the way hunger and poison affects players) of the server.</description>
+    </key>
+    <key name="enable-command-block" type="b">
+      <default>false</default>
+      <summary>Enables command blocks.</summary>
+      <description>Enables command blocks.</description>
+    </key>
+    <key name="enable-jmx-monitoring" type="b">
+      <default>false</default>
+      <summary>Exposes an MBean with the Object name net.minecraft.server:type=Server and two attributes averageTickTime and tickTimes exposing the tick times in milliseconds.</summary>
+      <description>Exposes an MBean with the Object name net.minecraft.server:type=Server and two attributes averageTickTime and tickTimes exposing the tick times in milliseconds.</description>
+    </key>
+    <key name="enable-query" type="b">
+      <default>false</default>
+      <summary>Enables GameSpy4 protocol server listener.</summary>
+      <description>Enables GameSpy4 protocol server listener.</description>
+    </key>
+    <key name="enable-rcon" type="b">
+      <default>false</default>
+      <summary>Enables remote access to the server console.</summary>
+      <description>Enables remote access to the server console.</description>
+    </key>
+    <key name="enable-status" type="b">
+      <default>true</default>
+      <summary>Makes the server appear as "online" on the server list.</summary>
+      <description>Makes the server appear as "online" on the server list.</description>
+    </key>
+    <!-- <key name="enforce-secure-profile" type="b">
+      <default>false</default>
+      <summary>If set to true, players without a Mojang-signed public key will not be able to connect to the server.</summary>
+      <description>If set to true, players without a Mojang-signed public key will not be able to connect to the server.</description>
+    </key> -->
+    <key name="enforce-whitelist" type="b">
+      <default>false</default>
+      <summary>Enforces the whitelist on the server.</summary>
+      <description>When this option is enabled, users who are not present on the whitelist (if it's enabled) get kicked from the server after the server reloads the whitelist file.</description>
+    </key>
+    <key name="entity-broadcast-range-percentage" type="i">
+      <default>100</default>
+      <summary>Controls how close entities need to be before being sent to clients.</summary>
+      <description>Higher values means they'll be rendered from farther away, potentially causing more lag. This is expressed the percentage of the default value. For example, setting to 50 will make it half as usual.</description>
+    </key>
+    <key name="force-gamemode" type="b">
+      <default>false</default>
+      <summary>Force players to join in the default game mode.</summary>
+      <description>Force players to join in the default game mode.</description>
+    </key>
+    <key name="function-permission-level" type="i">
+      <default>2</default>
+      <summary>Sets the default permission level for functions.</summary>
+      <description>Sets the default permission level for functions.</description>
+    </key>
+    <key name="gamemode" type="s">
+      <default>"SURVIVAL"</default>
+      <summary>Defines the mode of gameplay.</summary>
+      <description>Defines the mode of gameplay.</description>
+    </key>
+    <key name="generate-structures" type="b">
+      <default>true</default>
+      <summary>Defines whether structures (such as villages) can be generated.</summary>
+      <description>Defines whether structures (such as villages) can be generated.</description>
+    </key>
+    <key name="generator-settings" type="s">
+      <default>"{}"</default>
+      <summary>The settings used to customize world generation.</summary>
+      <description>Follow its format and write the corresponding JSON string. Remember to escape all : with \:.</description>
+    </key>
+    <key name="hardcore" type="b">
+      <default>false</default>
+      <summary>If set to true, server difficulty is ignored and set to hard and players are set to spectator mode if they die.</summary>
+      <description>If set to true, server difficulty is ignored and set to hard and players are set to spectator mode if they die.</description>
+    </key>
+    <key name="hide-online-players" type="b">
+      <default>false</default>
+      <summary>If set to true, a player list is not sent on status requests.</summary>
+      <description>If set to true, a player list is not sent on status requests.</description>
+    </key>
+    <key name="level-name" type="s">
+      <default>"world"</default>
+      <summary>The "level-name" value is used as the world name and its folder name.</summary>
+      <description>The player may also copy their saved game folder here, and change the name to the same as that folder's to load it instead.</description>
+    </key>
+    <key name="level-seed" type="s">
+      <default>""</default>
+      <summary>Sets a world seed for the player's world, as in Singleplayer.</summary>
+      <description>The world generates with a random seed if left blank.</description>
+    </key>
+    <key name="level-type" type="s">
+      <default>"default"</default>
+      <summary>Determines the type of map / the world preset that is generated.</summary>
+      <description>The world generates with a random seed if left blank.</description>
+    </key>
+    <key name="max-chained-neighbor-updates" type="i">
+      <default>1000000</default>
+      <summary>Limiting the amount of consecutive neighbor updates before skipping additional ones. Negative values remove the limit.</summary>
+      <description>Limiting the amount of consecutive neighbor updates before skipping additional ones. Negative values remove the limit.</description>
+    </key>
+    <key name="max-players" type="i">
+      <default>20</default>
+      <summary>The maximum number of players that can play on the server at the same time.</summary>
+      <description>The maximum number of players that can play on the server at the same time.</description>
+    </key>
+    <key name="max-tick-time" type="i">
+      <default>60000</default>
+      <summary>The maximum number of milliseconds a single tick may take before the server watchdog stops the server.</summary>
+      <description>The maximum number of milliseconds a single tick may take before the server watchdog stops the server.</description>
+    </key>
+    <key name="max-world-size" type="i">
+      <default>29999984</default>
+      <summary>This sets the maximum possible size in blocks, expressed as a radius, that the world border can obtain.</summary>
+      <description>This sets the maximum possible size in blocks, expressed as a radius, that the world border can obtain.</description>
+    </key>
+    <key name="motd" type="s">
+      <default>"A Minecraft Server"</default>
+      <summary>This is the message that is displayed in the server list of the client, below the name.</summary>
+      <description>This is the message that is displayed in the server list of the client, below the name.</description>
+    </key>
+    <key name="network-compression-threshold" type="i">
+      <default>256</default>
+      <summary>By default it allows packets that are n-1 bytes big to go normally, but a packet of n bytes or more gets compressed down.</summary>
+      <description>By default it allows packets that are n-1 bytes big to go normally, but a packet of n bytes or more gets compressed down.</description>
+    </key>
+    <key name="online-mode" type="b">
+      <default>true</default>
+      <summary>Server checks connecting players against Minecraft account database.</summary>
+      <description>Server checks connecting players against Minecraft account database.</description>
+    </key>
+    <key name="op-permission-level" type="i">
+      <default>4</default>
+      <summary>Sets the default permission level for ops when using /op.</summary>
+      <description>Sets the default permission level for ops when using /op.</description>
+    </key>
+    <key name="player-idle-timeout" type="i">
+      <default>0</default>
+      <summary>If non-zero, players are kicked from the server if they are idle for more than that many minutes.</summary>
+      <description>If non-zero, players are kicked from the server if they are idle for more than that many minutes.</description>
+    </key>
+    <key name="prevent-proxy-connections" type="b">
+      <default>false</default>
+      <summary>If the ISP/AS sent from the server is different from the one from Mojang Studios' authentication server, the player is kicked.</summary>
+      <description>If the ISP/AS sent from the server is different from the one from Mojang Studios' authentication server, the player is kicked.</description>
+    </key>
+    <key name="previews-chat" type="b">
+      <default>false</default>
+      <summary>If set to true, chat preview will be enabled.</summary>
+      <description>If set to true, chat preview will be enabled.</description>
+    </key>
+    <key name="pvp" type="b">
+      <default>true</default>
+      <summary>Enable PvP on the server.</summary>
+      <description>Players shooting themselves with arrows receive damage only if PvP is enabled.</description>
+    </key>
+    <key name="query-port" type="i">
+      <default>25565</default>
+      <summary>Sets the port for the query server.</summary>
+      <description>Sets the port for the query server.</description>
+    </key>
+    <key name="rate-limit" type="i">
+      <default>0</default>
+      <summary>Sets the maximum amount of packets a user can send before getting kicked. Setting to 0 disables this feature.</summary>
+      <description>Sets the maximum amount of packets a user can send before getting kicked. Setting to 0 disables this feature.</description>
+    </key>
+    <key name="rcon-password" type="s">
+      <default>""</default>
+      <summary>Sets the password for RCON: a remote console protocol that can allow other applications to connect and interact with a Minecraft server over the internet.</summary>
+      <description>Sets the password for RCON: a remote console protocol that can allow other applications to connect and interact with a Minecraft server over the internet.</description>
+    </key>
+    <key name="rcon-port" type="i">
+      <default>25575</default>
+      <summary>Sets the RCON network port.</summary>
+      <description>Sets the RCON network port.</description>
+    </key>
+    <key name="resource-pack" type="s">
+      <default>""</default>
+      <summary>Optional URI to a resource pack. The player may choose to use it.</summary>
+      <description>Optional URI to a resource pack. The player may choose to use it.</description>
+    </key>
+    <key name="resource-pack-prompt" type="s">
+      <default>""</default>
+      <summary>Optional, adds a custom message to be shown on resource pack prompt when require-resource-pack is used.</summary>
+      <description>Expects chat component syntax, can contain multiple lines.</description>
+    </key>
+    <key name="resource-pack-sha1" type="s">
+      <default>""</default>
+      <summary>Optional SHA-1 digest of the resource pack, in lowercase hexadecimal.</summary>
+      <description>It is recommended to specify this, because it is used to verify the integrity of the resource pack.</description>
+    </key>
+    <key name="require-resource-pack" type="b">
+      <default>false</default>
+      <summary>When this option is enabled (set to true), players will be prompted for a response and will be disconnected if they decline the required pack.</summary>
+      <description>When this option is enabled (set to true), players will be prompted for a response and will be disconnected if they decline the required pack.</description>
+    </key>
+    <key name="server-ip" type="s">
+      <default>""</default>
+      <summary>The player should set this if they want the server to bind to a particular IP.</summary>
+      <description>It is strongly recommended that the player leaves server-ip blank.</description>
+    </key>
+    <key name="server-port" type="i">
+      <default>25565</default>
+      <summary>Changes the port the server is hosting (listening) on.</summary>
+      <description>This port must be forwarded if the server is hosted in a network using NAT (if the player has a home router/firewall).</description>
+    </key>
+    <key name="simulation-distance" type="i">
+      <default>10</default>
+      <summary>Sets the maximum distance from players that living entities may be located in order to be updated by the server, measured in chunks in each direction of the player (radius, not diameter).</summary>
+      <description>If entities are outside of this radius, then they will not be ticked by the server nor will they be visible to players.</description>
+    </key>
+    <key name="snooper-enabled" type="b">
+      <!-- Note: Mojang default is true, but we set to false to increase privacy -->
+      <default>false</default>
+      <summary>Sets whether the server sends snoop data regularly to http://snoop.minecraft.net.</summary>
+      <description>Sets whether the server sends snoop data regularly to http://snoop.minecraft.net.</description>
+    </key>
+    <key name="spawn-animals" type="b">
+      <default>true</default>
+      <summary>Determines if animals can spawn.</summary>
+      <description>Determines if animals can spawn.</description>
+    </key>
+    <key name="spawn-monsters" type="b">
+      <default>true</default>
+      <summary>Determines if monsters can spawn.</summary>
+      <description>Determines if monsters can spawn.</description>
+    </key>
+    <key name="spawn-npcs" type="b">
+      <default>true</default>
+      <summary>Determines if villagers can spawn.</summary>
+      <description>Determines if villagers can spawn.</description>
+    </key>
+    <key name="spawn-protection" type="i">
+      <default>16</default>
+      <summary>Determines the side length of the square spawn protection area as 2x+1.</summary>
+      <description>Setting this to 0 disables the spawn protection.</description>
+    </key>
+    <key name="sync-chunk-writes" type="b">
+      <default>true</default>
+      <summary>Enables synchronous chunk writes.</summary>
+      <description>Enables synchronous chunk writes.</description>
+    </key>
+    <key name="text-filtering-config" type="s">
+      <default>""</default>
+      <summary></summary>
+      <description></description>
+    </key>
+    <key name="use-native-transport" type="b">
+      <default>true</default>
+      <summary>Linux server performance improvements: optimized packet sending/receiving on Linux.</summary>
+      <description>Linux server performance improvements: optimized packet sending/receiving on Linux.</description>
+    </key>
+    <key name="view-distance" type="i">
+      <default>10</default>
+      <summary>Sets the amount of world data the server sends the client, measured in chunks in each direction of the player (radius, not diameter).</summary>
+      <description>It determines the server-side viewing distance.</description>
+    </key>
+    <key name="white-list" type="b">
+      <default>false</default>
+      <summary>Enables a whitelist on the server.</summary>
+      <description>With a whitelist enabled, users not on the whitelist cannot connect.</description>
+    </key>
+  </schema>
+</schemalist>

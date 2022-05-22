@@ -1,0 +1,13 @@
+#!/bin/bash
+
+APP_ID=com.github.avojak.foreman
+
+# I'm lazy, and it's easier to remember './run' than the entire flatpak command
+EXTRA_ARGS=
+if [[ "$1" == "--debug" ]]; then
+    EXTRA_ARGS="--env=GTK_DEBUG=interactive"
+fi
+if [[ "$1" == "--inspect" ]]; then
+    EXTRA_ARGS="--command=sh --devel"
+fi
+flatpak run --env=G_MESSAGES_DEBUG=$APP_ID $EXTRA_ARGS $APP_ID ${@:2}
