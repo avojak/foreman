@@ -13,7 +13,7 @@
 
 ## The simple way to manage your Minecraft server
 
-Get up-and-running with a Minecraft server in moments. Foreman will pull the latest server executable, setup sensible default, and launch a new server for you. 
+Get up-and-running with a Minecraft server in moments. Foreman will pull the latest server executable, establish sensible default settings, and launch a new server for you. 
 
 Foreman is intended for those who want to run a Minecraft server on their computer without worrying about
 provisioning a server, and dealing with cloud hosting.
