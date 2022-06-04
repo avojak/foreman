@@ -188,7 +188,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         combo.set_attributes (version_cell_renderer_text, "text", VersionColumn.VERSION);
 
         combo.set_active (0);
-        
+
         return combo;
     }
 

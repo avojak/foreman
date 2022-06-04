@@ -66,7 +66,7 @@ public class Foreman.Layouts.MainLayout : Gtk.Grid {
         );
 
         detail_views = new Gee.HashMap<string, Foreman.Views.ServerDetailView> ();
-        
+
         server_details_stack = new Gtk.Stack () {
             expand = true
         };

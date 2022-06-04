@@ -96,7 +96,7 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
 
         version_manifest = result;
         last_updated = new DateTime.now ();
-        
+
         if (version_manifest != null) {
             debug ("Latest release: %s", version_manifest.latest.release);
             debug ("Latest snapshot: %s", version_manifest.latest.snapshot);
@@ -195,7 +195,7 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
                     dialog.show_extracting ();
                     return false;
                 });
-                
+
                 if (!unpack_server_executable (server_file)) {
                     // TODO: Error
                     downloaded_executables.unset (version);
@@ -221,7 +221,7 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
             if (version_details == null) {
                 return null;
             }
-    
+
             var server_details = version_details.downloads.get (Foreman.Models.VersionDetails.Download.Type.SERVER);
             var server_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, server_executable_dir_path, version));
             server_dir.make_directory (cancellable);

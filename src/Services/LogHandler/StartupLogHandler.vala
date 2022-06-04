@@ -53,10 +53,10 @@ public class Foreman.Services.StartupLogHandler : Foreman.Services.LogHandler {
     }
 
     protected override bool can_handle (Foreman.Models.LogMessage message, Foreman.Services.LogHandler.Source source) {
-        return starting_regex.match (message.raw) 
-                || (message.message != null 
-                    && (progress_regex.match (message.message) 
-                        || complete_regex.match (message.message) 
+        return starting_regex.match (message.raw)
+                || (message.message != null
+                    && (progress_regex.match (message.message)
+                        || complete_regex.match (message.message)
                         || failed_start_regex.match (message.message)
                         || failed_bind_regex.match (message.message)));
     }

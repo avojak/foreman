@@ -27,7 +27,7 @@ public class Foreman.Services.SinkLogHandler : Foreman.Services.LogHandler {
                     message_logged (message.raw);
                 }
                 break;
-            case STDERR: 
+            case STDERR:
                 error_logged (message.raw);
                 break;
             default:

@@ -19,7 +19,7 @@
     construct {
         var eula_link = new Gtk.LinkButton.with_label ("https://account.mojang.com/documents/minecraft_eula", "Minecraft End User License Agreement");
         var check_button = new Gtk.CheckButton.with_label (_("I accept the terms in the Minecraft EULA"));
-        
+
         var custom_content = new Gtk.Grid () {
             row_spacing = 20
         };

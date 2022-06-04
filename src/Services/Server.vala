@@ -222,7 +222,7 @@ public class Foreman.Services.Server : GLib.Object {
             } catch (GLib.Error e) {
                 warning ("Error waiting for process to terminate normally: %s", e.message);
             }
-            
+
             if (!process.get_if_exited ()) {
                 // Check if the process exited abnormally
                 errored ();

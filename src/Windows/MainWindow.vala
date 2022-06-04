@@ -301,7 +301,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
         } else {
             Foreman.Core.Client.get_default ().server_manager.create_server (name, version).start ();
         }
-        
+
     }
 
     private int show_eula_dialog () {
@@ -363,7 +363,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
     //              });
     //          });
     //      });
-        
+
     //  }
 
 }

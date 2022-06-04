@@ -60,7 +60,7 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
         });
 
         control_stack = new Gtk.Stack () {
-            
+
         };
         control_stack.add_named (start_button, "start");
         control_stack.add_named (progress_button, "progress");

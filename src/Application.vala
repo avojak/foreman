@@ -63,7 +63,7 @@ public class Foreman.Application : Gtk.Application {
         //      if (version_manifest == null) {
         //          return;
         //      }
-            
+
         //  });
     }
 
