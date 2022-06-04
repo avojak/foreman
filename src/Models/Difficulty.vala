@@ -25,6 +25,21 @@ public enum Foreman.Models.Difficulty {
         }
     }
 
+    public string get_short_name () {
+        switch (this) {
+            case PEACEFUL:
+                return _("PEACEFUL");
+            case EASY:
+                return _("EASY");
+            case NORMAL:
+                return _("NORMAL");
+            case HARD:
+                return _("HARD");
+            default:
+                assert_not_reached ();
+        }
+    }
+
     public static Difficulty get_value_by_name (string name) {
         EnumClass enumc = (EnumClass) typeof (Difficulty).class_ref ();
         unowned EnumValue? eval = enumc.get_value_by_name (name);
@@ -32,6 +47,21 @@ public enum Foreman.Models.Difficulty {
             assert_not_reached ();
         }
         return (Difficulty) eval.value;
+    }
+
+    public static Difficulty get_value_by_short_name (string short_name) {
+        switch (short_name) {
+            case "PEACEFUL":
+                return PEACEFUL;
+            case "EASY":
+                return EASY;
+            case "NORMAL":
+                return NORMAL;
+            case "HARD":
+                return HARD;
+            default:
+                assert_not_reached ();
+        }
     }
 
 }

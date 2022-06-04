@@ -55,7 +55,38 @@ public class Foreman.Models.VersionDetails : GLib.Object {
 
     }
 
+    public enum Type {
+
+        OLD_ALPHA, OLD_BETA, SNAPSHOT, RELEASE;
+
+        public static Type from_string (string str) {
+            switch (str) {
+                case "old_alpha":
+                    return OLD_ALPHA;
+                case "old_beta":
+                    return OLD_BETA;
+                case "snapshot":
+                    return SNAPSHOT;
+                case "release":
+                    return RELEASE;
+                default:
+                    assert_not_reached ();
+            }
+        }
+
+        public static Type get_value_by_name (string name) {
+            EnumClass enumc = (EnumClass) typeof (Type).class_ref ();
+            unowned EnumValue? eval = enumc.get_value_by_name (name);
+            if (eval == null) {
+                assert_not_reached ();
+            }
+            return (Type) eval.value;
+        }
+
+    }
+
     public string id { get; set; }
+    public Type version_type { get; set; }
     public Gee.Map<Download.Type, Download> downloads { get; set; }
 
     public static VersionDetails from_json (Json.Object json) {
@@ -64,6 +95,9 @@ public class Foreman.Models.VersionDetails : GLib.Object {
             switch (name) {
                 case "id":
                     obj.id = json.get_string_member (name);
+                    break;
+                case "type":
+                    obj.version_type = Type.from_string (json.get_string_member (name));
                     break;
                 case "downloads":
                     obj.downloads = new Gee.HashMap<Download.Type, Download> ();

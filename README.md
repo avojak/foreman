@@ -13,10 +13,9 @@
 
 ## The simple way to manage your Minecraft server
 
-Get up-and-running with a Minecraft server in moments. Foreman will pull the latest server executable, establish sensible default settings, and launch a new server for you. 
+Get up-and-running with a Minecraft server in moments. Foreman will pull the latest server executable, <!-- establish sensible default settings, -->and launch a new server for you. 
 
-Foreman is intended for those who want to run a Minecraft server on their computer without worrying about
-provisioning a server, and dealing with cloud hosting.
+Foreman is intended for those who want to run a Minecraft server on their computer without worrying about digging into the commandline, provisioning a server, or dealing with cloud hosting.
 
 <!-- | ![Screenshot](data/assets/screenshots/foreman-screenshot-01.png) | ![Screenshot](data/assets/screenshots/foreman-screenshot-02.png) |
 |------------------------------------------------------------------|------------------------------------------------------------------| -->
@@ -29,7 +28,7 @@ Flatpak is the preferred method of building Foreman:
 
 ```bash
 $ flatpak-builder build com.github.avojak.foreman.yml --user --install --force-clean
-$ flatpak run --env=G_MESSAGES_DEBUG=all com.github.avojak.foreman
+$ flatpak run --env=G_MESSAGES_DEBUG=com.github.avojak.foreman com.github.avojak.foreman
 ```
 
 ### Updating Translations
@@ -54,3 +53,5 @@ $ ninja -C build com.github.avojak.foreman-update-po
 ## Disclaimer
 
 Foreman is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Mojang&copy;, or any of its affiliates.
+
+"Minecraft" is a trademark of Mojang Synergies AB.

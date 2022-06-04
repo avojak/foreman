@@ -8,14 +8,20 @@
     public const string ACTION_PREFIX = "win.";
     public const string ACTION_QUIT = "action_quit";
     public const string ACTION_PREFERENCES = "action_preferences";
+    public const string ACTION_TOGGLE_SIDEBAR = "action_toggle_sidebar";
     public const string ACTION_CREATE_NEW_SERVER = "action_create_new_server";
-    public const string ACTION_AVAILABLE_DOWNLOADS = "action_available_downloads";
+    //  public const string ACTION_AVAILABLE_DOWNLOADS = "action_available_downloads";
+    public const string ACTION_CONFIGURE_SELECTED_SERVER = "action_configure_selected_server";
+    public const string ACTION_DELETE_SELECTED_SERVER = "action_delete_selected_server";
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { ACTION_QUIT, action_quit },
         { ACTION_PREFERENCES, action_preferences },
+        { ACTION_TOGGLE_SIDEBAR, action_toggle_sidebar },
         { ACTION_CREATE_NEW_SERVER, action_create_new_server },
-        { ACTION_AVAILABLE_DOWNLOADS, action_available_downloads }
+        //  { ACTION_AVAILABLE_DOWNLOADS, action_available_downloads },
+        { ACTION_CONFIGURE_SELECTED_SERVER, action_configure_selected_server },
+        { ACTION_DELETE_SELECTED_SERVER, action_delete_selected_server }
     };
 
     private static Gee.MultiMap<string, string> accelerators;
@@ -36,6 +42,7 @@
         accelerators = new Gee.HashMultiMap<string, string> ();
         accelerators.set (ACTION_QUIT, "<Control>q");
         accelerators.set (ACTION_PREFERENCES, "<Control><Shift>p");
+        accelerators.set (ACTION_TOGGLE_SIDEBAR, "<Control>backslash");
     }
 
     construct {
@@ -62,12 +69,24 @@
         window.show_preferences_dialog ();
     }
 
+    private void action_toggle_sidebar () {
+        window.toggle_sidebar ();
+    }
+
     private void action_create_new_server () {
         window.show_create_new_server_dialog ();
     }
 
-    private void action_available_downloads () {
-        window.show_available_server_downloads_dialog ();
+    //  private void action_available_downloads () {
+    //      window.show_available_server_downloads_dialog ();
+    //  }
+
+    private void action_configure_selected_server () {
+        window.configure_selected_server ();
+    }
+
+    private void action_delete_selected_server () {
+        window.delete_selected_server ();
     }
 
 }

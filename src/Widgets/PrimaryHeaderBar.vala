@@ -3,9 +3,9 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Foreman.Widgets.HeaderBar : Hdy.HeaderBar {
+public class Foreman.Widgets.PrimaryHeaderBar : Hdy.HeaderBar {
 
-    public HeaderBar () {
+    public PrimaryHeaderBar () {
         Object (
             title: Constants.APP_NAME,
             show_close_button: true,
@@ -26,6 +26,16 @@ public class Foreman.Widgets.HeaderBar : Hdy.HeaderBar {
             relief = Gtk.ReliefStyle.NONE,
             valign = Gtk.Align.CENTER
         };
+
+        var toggle_sidebar_accellabel = new Granite.AccelLabel.from_action_name (
+            _("Toggle Sidebar"),
+            Foreman.Services.ActionManager.ACTION_PREFIX + Foreman.Services.ActionManager.ACTION_TOGGLE_SIDEBAR
+        );
+
+        var toggle_sidebar_menu_item = new Gtk.ModelButton ();
+        toggle_sidebar_menu_item.action_name = Foreman.Services.ActionManager.ACTION_PREFIX + Foreman.Services.ActionManager.ACTION_TOGGLE_SIDEBAR;
+        toggle_sidebar_menu_item.get_child ().destroy ();
+        toggle_sidebar_menu_item.add (toggle_sidebar_accellabel);
 
         var preferences_accellabel = new Granite.AccelLabel.from_action_name (
             _("Preferences…"),
@@ -55,9 +65,10 @@ public class Foreman.Widgets.HeaderBar : Hdy.HeaderBar {
             orientation = Gtk.Orientation.VERTICAL,
             width_request = 200
         };
-        settings_popover_grid.attach (preferences_menu_item, 0, 0, 1, 1);
-        settings_popover_grid.attach (create_menu_separator (), 0, 1, 1, 1);
-        settings_popover_grid.attach (quit_menu_item, 0, 2, 1, 1);
+        settings_popover_grid.attach (toggle_sidebar_menu_item, 0, 0, 1, 1);
+        settings_popover_grid.attach (preferences_menu_item, 0, 1, 1, 1);
+        settings_popover_grid.attach (create_menu_separator (), 0, 2, 1, 1);
+        settings_popover_grid.attach (quit_menu_item, 0, 3, 1, 1);
         settings_popover_grid.show_all ();
 
         var settings_popover = new Gtk.Popover (null);

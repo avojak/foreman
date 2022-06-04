@@ -17,7 +17,7 @@
       <description>The saved vertical position of the window</description>
     </key>
     <key name="window-width" type="i">
-      <default>800</default>
+      <default>900</default>
       <summary>The saved width of the window</summary>
       <description>The saved width of the window</description>
     </key>
@@ -25,6 +25,11 @@
       <default>600</default>
       <summary>The saved height of the window</summary>
       <description>The saved height of the window</description>
+    </key>
+    <key name="font" type="s">
+      <default>'Monospace Regular 9'</default>
+      <summary>Preferred Font</summary>
+      <description>Set the preferred font.</description>
     </key>
     <key name="use-internal-executable" type="b">
       <default>true</default>
@@ -63,8 +68,8 @@
       <summary>Send rcon console command outputs to all online operators.</summary>
       <description>Send rcon console command outputs to all online operators.</description>
     </key>
-    <key name="difficulty" type="s">
-      <default>"EASY"</default>
+    <key name="difficulty" type="i">
+      <default>1</default>
       <summary>Defines the difficulty (such as damage dealt by mobs and the way hunger and poison affects players) of the server.</summary>
       <description>Defines the difficulty (such as damage dealt by mobs and the way hunger and poison affects players) of the server.</description>
     </key>
@@ -118,8 +123,8 @@
       <summary>Sets the default permission level for functions.</summary>
       <description>Sets the default permission level for functions.</description>
     </key>
-    <key name="gamemode" type="s">
-      <default>"SURVIVAL"</default>
+    <key name="gamemode" type="i">
+      <default>0</default>
       <summary>Defines the mode of gameplay.</summary>
       <description>Defines the mode of gameplay.</description>
     </key>

@@ -3,5 +3,7 @@
   <gresource prefix="/com/github/avojak/foreman">
     <file alias="WelcomeView.css" compressed="true">styles/WelcomeView.css</file>
     <file alias="AlertView.css" compressed="true">styles/AlertView.css</file>
+    <file alias="SettingsSidebar.css" compressed="true">styles/SettingsSidebar.css</file>
+    <file alias="ProgressButton.css" compressed="true">styles/ProgressButton.css</file>
   </gresource>
 </gresources>

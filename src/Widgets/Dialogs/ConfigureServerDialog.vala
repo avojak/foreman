@@ -3,13 +3,13 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Foreman.Widgets.Dialogs.ConfigureNewServerDialog : Granite.Dialog {
+public class Foreman.Widgets.Dialogs.ConfigureServerDialog : Granite.Dialog {
 
-    public ConfigureNewServerDialog (Foreman.Windows.MainWindow main_window) {
+    public ConfigureServerDialog (Foreman.Windows.MainWindow main_window) {
         Object (
             deletable: false,
             resizable: false,
-            title: _("Available Server Downloads"),
+            title: _("Configure Server"),
             transient_for: main_window,
             modal: false
         );
@@ -27,7 +27,7 @@ public class Foreman.Widgets.Dialogs.ConfigureNewServerDialog : Granite.Dialog {
 
         var header_image = new Gtk.Image.from_icon_name ("browser-download", Gtk.IconSize.DIALOG);
 
-        var header_title = new Gtk.Label (_("Available Server Downloads"));
+        var header_title = new Gtk.Label (_("Configure Server"));
         header_title.get_style_context ().add_class (Granite.STYLE_CLASS_H2_LABEL);
         header_title.halign = Gtk.Align.START;
         header_title.hexpand = true;

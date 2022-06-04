@@ -1,0 +1,13 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
+ */
+
+scrolledwindow.settings-sidebar list {
+    /* 
+     * Set the background color of Granite.SettingsSidebar to fully transparent so
+     * that there isn't a noticable color difference between the header bar and the
+     * sidebar.
+     */
+    background-color: rgba(255, 255, 255, 0);
+}

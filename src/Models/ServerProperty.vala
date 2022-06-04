@@ -18,7 +18,9 @@ public abstract class Foreman.Models.ServerProperty<T> : GLib.Object {
     }
 
     protected abstract T get_default_value ();
-    //  public abstract T set_default_value ();
+
+    public abstract void set_from_string (string str);
+    public abstract string as_string ();
 
     //  public static 
 
@@ -34,6 +36,14 @@ public class Foreman.Models.StringServerProperty : Foreman.Models.ServerProperty
         return Foreman.Application.settings.get_string (schema_key);
     }
 
+    public override void set_from_string (string str) {
+        this.value = str;
+    }
+
+    public override string as_string () {
+        return this.value;
+    }
+
 }
 
 public class Foreman.Models.BooleanServerProperty : Foreman.Models.ServerProperty<bool> {
@@ -44,6 +54,14 @@ public class Foreman.Models.BooleanServerProperty : Foreman.Models.ServerPropert
 
     protected override bool get_default_value () {
         return Foreman.Application.settings.get_boolean (schema_key);
+    }
+
+    public override void set_from_string (string str) {
+        this.value = bool.parse (str);
+    }
+
+    public override string as_string () {
+        return this.value.to_string ();
     }
 
 }
@@ -58,4 +76,24 @@ public class Foreman.Models.IntegerServerProperty : Foreman.Models.ServerPropert
         return Foreman.Application.settings.get_int (schema_key);
     }
 
+    public override void set_from_string (string str) {
+        this.value = int.parse (str);
+    }
+
+    public override string as_string () {
+        return this.value.to_string ();
+    }
+
 }
+
+//  public class Foreman.Models.EnumServerProperty<T> : Foreman.Models.ServerProperty<T> {
+
+//      public EnumServerProperty (string schema_key, string? property_key = null) {
+//          this (schema_key, property_key);
+//      }
+
+//      protected override T get_default_value () {
+//          return Foreman.Application.settings.get_string (schema_key);
+//      }
+
+//  }

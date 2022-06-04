@@ -88,4 +88,18 @@ public class Foreman.Services.JavaExecutionService : GLib.Object {
         return true;
     }
 
+    public double? get_heap_size (string pid) {
+        string command = "bash -c \"(jstat -gc %s 2>/dev/null || echo \"0 0 0 0 0 0 0 0 0\") | tail -n 1 | awk '{split($0,a,\" \"); sum=a[3]+a[4]+a[6]+a[8]; print sum/1024}'\"".printf (pid);
+        try {
+            string stdout;
+            string stderr;
+            int retcode;
+            GLib.Process.spawn_command_line_sync (command, out stdout, out stderr, out retcode);
+            return double.parse (stdout);
+        } catch (GLib.SpawnError e) {
+            warning (e.message);
+            return null;
+        }
+    }
+
 }

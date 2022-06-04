@@ -46,6 +46,41 @@ modules:
       - $FLATPAK_DEST/bootstrap-java/jdk/bin/jlink --no-header-files --no-man-pages --compress=2 --add-modules $($FLATPAK_DEST/bootstrap-java/jdk/bin/java --list-modules | cut -d '@' -f 1 | xargs | sed -e 's/\s/,/g') --output jdk
       - mv jdk $FLATPAK_DEST/jdk
 
+  # - name: livechart
+  #   buildsystem: meson
+  #   sources:
+  #     - type: git
+  #       url: https://github.com/lcallarec/live-chart.git
+  #       tag: 1.9.1
+  #       commit: 5f8ddce715f6a9130955bc5f08437050265a317c
+
+  # - name: libnm
+  #   buildsystem: meson
+  #   sources:
+  #     - type: git
+  #       url: https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git
+  #       tag: 1.36.6
+  #       commit: 2090a918b597e267553879d87446bab6b7fe8ec6
+  #   modules:
+  #     - name: libndp
+  #       buildsystem: autotools
+  #       sources:
+  #         - type: git
+  #           url: https://github.com/jpirko/libndp.git
+  #           tag: v1.8
+  #           commit: 009ce9cd9b950ffa1f4f94c9436027b936850d0c
+
+  - name: iproute2
+    buildsystem: autotools
+    make-install-args:
+      - PREFIX=/app
+      - DESTDIR=/app
+      - SBINDIR=/bin
+    sources:
+      - type: archive
+        url: https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/iproute2-5.17.0.tar.xz
+        sha256: 6e384f1b42c75e1a9daac57866da37dcff909090ba86eb25a6e764da7893660e
+
   - name: foreman
     buildsystem: meson
     sources:
