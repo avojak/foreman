@@ -13,6 +13,7 @@
     //  public const string ACTION_AVAILABLE_DOWNLOADS = "action_available_downloads";
     public const string ACTION_CONFIGURE_SELECTED_SERVER = "action_configure_selected_server";
     public const string ACTION_DELETE_SELECTED_SERVER = "action_delete_selected_server";
+    public const string ACTION_HELP = "action_help";
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { ACTION_QUIT, action_quit },
@@ -21,7 +22,8 @@
         { ACTION_CREATE_NEW_SERVER, action_create_new_server },
         //  { ACTION_AVAILABLE_DOWNLOADS, action_available_downloads },
         { ACTION_CONFIGURE_SELECTED_SERVER, action_configure_selected_server },
-        { ACTION_DELETE_SELECTED_SERVER, action_delete_selected_server }
+        { ACTION_DELETE_SELECTED_SERVER, action_delete_selected_server },
+        { ACTION_HELP, action_help }
     };
 
     private static Gee.MultiMap<string, string> accelerators;
@@ -43,6 +45,7 @@
         accelerators.set (ACTION_QUIT, "<Control>q");
         accelerators.set (ACTION_PREFERENCES, "<Control><Shift>p");
         accelerators.set (ACTION_TOGGLE_SIDEBAR, "<Control>backslash");
+        accelerators.set (ACTION_HELP, "<Control>h");
     }
 
     construct {
@@ -87,6 +90,10 @@
 
     private void action_delete_selected_server () {
         window.delete_selected_server ();
+    }
+
+    private void action_help () {
+        window.show_help_dialog ();
     }
 
 }

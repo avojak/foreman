@@ -5,7 +5,7 @@
 
 public class Foreman.Widgets.Dialogs.ConfigureServerDialog : Granite.Dialog {
 
-    public ConfigureServerDialog (Foreman.Windows.MainWindow main_window) {
+    public ConfigureServerDialog (Foreman.Windows.MainWindow main_window, Foreman.Services.Server.Context server_context) {
         Object (
             deletable: false,
             resizable: false,
@@ -25,7 +25,7 @@ public class Foreman.Widgets.Dialogs.ConfigureServerDialog : Granite.Dialog {
         header_grid.margin_bottom = 10;
         header_grid.column_spacing = 10;
 
-        var header_image = new Gtk.Image.from_icon_name ("browser-download", Gtk.IconSize.DIALOG);
+        var header_image = new Gtk.Image.from_icon_name (Constants.APP_ID + ".network-server-configure", Gtk.IconSize.DIALOG);
 
         var header_title = new Gtk.Label (_("Configure Server"));
         header_title.get_style_context ().add_class (Granite.STYLE_CLASS_H2_LABEL);

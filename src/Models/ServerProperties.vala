@@ -5,7 +5,14 @@
 
 public class Foreman.Models.ServerProperties : GLib.Object {
 
-    public Foreman.Models.ServerProperty<bool> allow_flight = new Foreman.Models.BooleanServerProperty ("allow-flight");
+    public const string ALLOW_FLIGHT = "allow-flight";
+
+    //  public Foreman.Models.ServerProperty<bool>? allow_flight {
+    //      get { return properties_mapping.has_key ("allow-flight") ? properties_mapping.get ("allow-flight") : null; }
+    //      set { properties_mapping.set ("allow-flight", value); }
+    //  }
+
+    public Foreman.Models.ServerProperty<bool> allow_flight = new Foreman.Models.BooleanServerProperty (ALLOW_FLIGHT);
     public Foreman.Models.ServerProperty<bool> allow_nether = new Foreman.Models.BooleanServerProperty ("allow-nether");
     public Foreman.Models.ServerProperty<bool> broadcast_console_to_ops = new Foreman.Models.BooleanServerProperty ("broadcast-console-to-ops");
     public Foreman.Models.ServerProperty<bool> broadcast_rcon_to_ops = new Foreman.Models.BooleanServerProperty ("broadcast-rcon-to-ops");
@@ -93,13 +100,17 @@ public class Foreman.Models.ServerProperties : GLib.Object {
     public string view_distance { get; set; }
     //  public string white_list { get; set; }
 
+    public Foreman.Models.ServerProperties.from_defaults () {
+        // TODO
+    }
+
     /**
      * Updates the given properties file with the current values in the model. This ensures
      * that properties not already present in the properties file (e.g. properties that have
      * been deprecated or are not supported by the particular version of the server) will not
      * be added.
      */
-    public bool update_file (GLib.File file) {
+    public bool write_to_file (GLib.File file) {
         var sb = new GLib.StringBuilder ();
         try {
             var input_stream = new GLib.DataInputStream (file.read ());
@@ -128,7 +139,7 @@ public class Foreman.Models.ServerProperties : GLib.Object {
     /**
      * Reads in values from the given properties file.
      */
-    public bool from_file (GLib.File file) {
+    public Foreman.Models.ServerProperties.from_file (GLib.File file) {
         try {
             var input_stream = new GLib.DataInputStream (file.read ());
             string? line = null;
@@ -148,9 +159,7 @@ public class Foreman.Models.ServerProperties : GLib.Object {
             }
         } catch (GLib.Error e) {
             warning (e.message);
-            return false;
         }
-        return true;
     }
 
 }

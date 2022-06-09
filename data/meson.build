@@ -24,6 +24,23 @@ foreach i : icon_sizes
     )
 endforeach
 
+install_data(
+    join_paths('assets', 'icons', '48x48', meson.project_name() + '.network-server-configure.svg'),
+    install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', '48x48' + '@2', 'actions'),
+    rename: '@0@.network-server-configure.svg'.format(application_id)
+)
+
+install_data(
+    join_paths('assets', 'icons', '32x32', meson.project_name() + '.java.svg'),
+    install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', '32x32' + '@2', 'actions'),
+    rename: '@0@.java.svg'.format(application_id)
+)
+install_data(
+    join_paths('assets', 'icons', '48x48', meson.project_name() + '.java.svg'),
+    install_dir: join_paths(get_option('datadir'), 'icons', 'hicolor', '48x48' + '@2', 'actions'),
+    rename: '@0@.java.svg'.format(application_id)
+)
+
 # Install the settings schema
 schema_path = '/com/github/avojak/foreman/'
 schema_conf = configuration_data()

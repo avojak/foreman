@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    width="48"
    height="48"
    id="svg4569"
-   sodipodi:docname="com.github.avojak.iridium.network-server-new.svg"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+   sodipodi:docname="com.github.avojak.foreman.network-server-new.svg"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -23,17 +23,20 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
+     inkscape:window-width="3008"
+     inkscape:window-height="1631"
      id="namedview579"
      showgrid="false"
      inkscape:zoom="13"
-     inkscape:cx="24"
-     inkscape:cy="24"
+     inkscape:cx="17.807692"
+     inkscape:cy="24.038462"
      inkscape:window-x="0"
      inkscape:window-y="30"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg4569" />
+     inkscape:current-layer="svg4569"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata42">
     <rdf:RDF>
@@ -372,6 +375,72 @@
      y="4.5"
      id="rect6741"
      style="opacity:0.2;fill:none;stroke:url(#linearGradient3916);stroke-width:0.99999994;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+  <g
+     id="g6104"
+     transform="matrix(0.06379217,0,0,0.06379217,15.333566,5.614305)">
+    <g
+       id="a"
+       transform="matrix(19,11,0,22,-44.89581,118.81792)"
+       style="fill:none;stroke-linecap:square">
+      <path
+         d="m 0.5,0.5 h 9 v 9 h -9"
+         fill="#443322"
+         id="path6025" />
+      <path
+         d="M 2,8 V 9 H 4 V 8 H 9 V 7 H 7 V 5"
+         stroke="#886644"
+         id="path6027" />
+      <path
+         d="M 1,8 V 7 H 3 V 6 H 4 M 5,9 H 7 V 8 H 6 V 4 M 7,6 H 8 V 7 M 9,4 v 1"
+         stroke="#664433"
+         id="path6029" />
+      <path
+         d="M 1,7 H 2 M 4,7 H 5"
+         stroke="#aa7755"
+         id="path6031" />
+      <path
+         d="M 4,4 V 1 H 8 V 3 H 7 V 2 H 4 V 3 H 2 v 1"
+         stroke="#559933"
+         id="path6033" />
+      <path
+         d="M 2,1 H 3 M 9,1 V 2"
+         stroke="#66aa44"
+         id="path6035" />
+      <path
+         d="M 3,2 H 4"
+         stroke="#77cc55"
+         id="path6037" />
+      <path
+         d="M 1,1 V 2 H 2"
+         stroke="#99cc66"
+         id="path6039" />
+    </g>
+    <use
+       opacity="0.5"
+       transform="matrix(-1,0,0,1,271.20838,0)"
+       xlink:href="#a"
+       id="use6042"
+       x="0"
+       y="0"
+       style="fill:none;stroke-linecap:square" />
+    <g
+       transform="matrix(-19,11,-19,-11,326.10419,135.81792)"
+       id="g6050"
+       style="fill:none;stroke-linecap:square">
+      <path
+         d="m 0.5,0.5 h 9 v 9 h -9"
+         fill="#77bb44"
+         id="path6044" />
+      <path
+         d="M 3,4 V 6 H 1 V 8 H 4 V 9 H 6 V 7 M 2,3 H 6 V 1 H 5 V 2 H 8 M 7,4 V 5 H 4 M 9,4 V 6 H 8 v 3"
+         stroke="#88cc55"
+         id="path6046" />
+      <path
+         d="M 1,3 V 5 M 5,5 V 6 M 5,8 V 9 M 7,2 v 1 m 1,4 h 1"
+         stroke="#aadd77"
+         id="path6048" />
+    </g>
+  </g>
   <path
      style="opacity:0.2;fill:url(#linearGradient3887);fill-opacity:1;stroke:none;display:inline"
      d="M 1,4 1,25 47,9.6874999 47,4 z"

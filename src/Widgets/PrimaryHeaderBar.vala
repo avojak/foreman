@@ -48,6 +48,17 @@ public class Foreman.Widgets.PrimaryHeaderBar : Hdy.HeaderBar {
         preferences_menu_item.get_child ().destroy ();
         preferences_menu_item.add (preferences_accellabel);
 
+        var help_accellabel = new Granite.AccelLabel.from_action_name (
+            _("Help…"),
+            Foreman.Services.ActionManager.ACTION_PREFIX + Foreman.Services.ActionManager.ACTION_HELP
+        );
+
+        var help_menu_item = new Gtk.ModelButton () {
+            action_name = Foreman.Services.ActionManager.ACTION_PREFIX + Foreman.Services.ActionManager.ACTION_HELP
+        };
+        help_menu_item.get_child ().destroy ();
+        help_menu_item.add (help_accellabel);
+
         var quit_accellabel = new Granite.AccelLabel.from_action_name (
             _("Quit"),
             Foreman.Services.ActionManager.ACTION_PREFIX + Foreman.Services.ActionManager.ACTION_QUIT
@@ -68,7 +79,9 @@ public class Foreman.Widgets.PrimaryHeaderBar : Hdy.HeaderBar {
         settings_popover_grid.attach (toggle_sidebar_menu_item, 0, 0, 1, 1);
         settings_popover_grid.attach (preferences_menu_item, 0, 1, 1, 1);
         settings_popover_grid.attach (create_menu_separator (), 0, 2, 1, 1);
-        settings_popover_grid.attach (quit_menu_item, 0, 3, 1, 1);
+        settings_popover_grid.attach (help_menu_item, 0, 3, 1, 1);
+        settings_popover_grid.attach (create_menu_separator (), 0, 4, 1, 1);
+        settings_popover_grid.attach (quit_menu_item, 0, 5, 1, 1);
         settings_popover_grid.show_all ();
 
         var settings_popover = new Gtk.Popover (null);

@@ -8,6 +8,8 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
     private Granite.ValidatedEntry name_entry;
     private Gtk.ListStore list_store;
     private Gtk.ComboBox version_combo;
+    private Granite.Widgets.ModeButton game_mode_button;
+    private Granite.Widgets.ModeButton difficulty_button;
     private Gtk.Button create_button;
 
     public enum VersionColumn {
@@ -20,7 +22,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
             resizable: false,
             title: _("Create Server"),
             transient_for: main_window,
-            modal: true
+            modal: false
         );
     }
 
@@ -44,7 +46,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
             version_combo.get_active_iter (out iter);
             GLib.Value value;
             list_store.get_value (iter, VersionColumn.VERSION, out value);
-            create_button_clicked (name_entry.get_text (), value.get_string ());
+            create_button_clicked (name_entry.get_text (), value.get_string (), create_properties ());
         });
 
         add_action_widget (cancel_button, 0);
@@ -101,7 +103,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         var game_mode_label = new Gtk.Label (_("Game mode:")) {
             halign = Gtk.Align.END
         };
-        var game_mode_button = new Granite.Widgets.ModeButton () {
+        game_mode_button = new Granite.Widgets.ModeButton () {
             //  margin = 12
         };
         game_mode_button.append_text (Foreman.Models.GameMode.SURVIVAL.get_display_string ());
@@ -113,7 +115,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         var difficulty_label = new Gtk.Label (_("Difficulty:")) {
             halign = Gtk.Align.END
         };
-        var difficulty_button = new Granite.Widgets.ModeButton () {
+        difficulty_button = new Granite.Widgets.ModeButton () {
             //  margin = 12
         };
         difficulty_button.append_text (Foreman.Models.Difficulty.PEACEFUL.get_display_string ());
@@ -196,6 +198,12 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         create_button.sensitive = name_entry.is_valid;
     }
 
-    public signal void create_button_clicked (string name, string version);
+    private Foreman.Models.ServerProperties create_properties () {
+        var properties = new Foreman.Models.ServerProperties.from_defaults ();
+        properties.difficulty.set_from_string (((Foreman.Models.GameMode) difficulty_button.selected).get_short_name ());
+        return properties;
+    }
+
+    public signal void create_button_clicked (string name, string version, Foreman.Models.ServerProperties properties);
 
 }

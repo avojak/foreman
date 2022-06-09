@@ -128,12 +128,12 @@ public class Foreman.Layouts.MainLayout : Gtk.Grid {
         page.stop_button_clicked.connect (() => {
             stop_button_clicked (server_context);
         });
-        page.delete_button_clicked.connect (() => {
-            delete_button_clicked (server_context);
-        });
-        page.configure_button_clicked.connect (() => {
-            configure_button_clicked (server_context);
-        });
+        //  page.delete_button_clicked.connect (() => {
+        //      delete_button_clicked (server_context);
+        //  });
+        //  page.configure_button_clicked.connect (() => {
+        //      configure_button_clicked (server_context);
+        //  });
         page.command_to_send.connect ((command) => {
             command_to_send (server_context, command);
         });
@@ -222,8 +222,8 @@ public class Foreman.Layouts.MainLayout : Gtk.Grid {
 
     public signal void start_button_clicked (Foreman.Services.Server.Context server_context);
     public signal void stop_button_clicked (Foreman.Services.Server.Context server_context);
-    public signal void delete_button_clicked (Foreman.Services.Server.Context server_context);
-    public signal void configure_button_clicked (Foreman.Services.Server.Context server_context);
+    //  public signal void delete_button_clicked (Foreman.Services.Server.Context server_context);
+    //  public signal void configure_button_clicked (Foreman.Services.Server.Context server_context);
     public signal void command_to_send (Foreman.Services.Server.Context server_context, string command);
 
 }

@@ -12,7 +12,9 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
 
     private Foreman.Widgets.Dialogs.PreferencesDialog? preferences_dialog;
     private Foreman.Widgets.Dialogs.CreateNewServerDialog? create_new_server_dialog;
+    private Foreman.Widgets.Dialogs.ConfigureServerDialog? configure_server_dialog;
     private Foreman.Widgets.Dialogs.AvailableServerDownloadsDialog? available_server_downloads_dialog;
+    private Foreman.Widgets.Dialogs.HelpDialog? help_dialog;
 
     private Foreman.Layouts.MainLayout layout;
 
@@ -35,8 +37,8 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
         layout = new Foreman.Layouts.MainLayout (this);
         layout.start_button_clicked.connect (on_start_button_clicked);
         layout.stop_button_clicked.connect (on_stop_button_clicked);
-        layout.delete_button_clicked.connect (on_delete_button_clicked);
-        layout.delete_button_clicked.connect (on_configure_button_clicked);
+        //  layout.delete_button_clicked.connect (on_delete_button_clicked);
+        //  layout.delete_button_clicked.connect (on_configure_button_clicked);
         layout.command_to_send.connect (on_command_to_send);
 
         // Populate the layout
@@ -174,13 +176,13 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
         Foreman.Core.Client.get_default ().server_manager.stop_server (server_context.uuid);
     }
 
-    private void on_delete_button_clicked (Foreman.Services.Server.Context server_context) {
-        Foreman.Core.Client.get_default ().server_manager.delete_server (server_context.uuid);
-    }
+    //  private void on_delete_button_clicked (Foreman.Services.Server.Context server_context) {
+    //      Foreman.Core.Client.get_default ().server_manager.delete_server (server_context.uuid);
+    //  }
 
-    private void on_configure_button_clicked (Foreman.Services.Server.Context server_context) {
-        // TODO
-    }
+    //  private void on_configure_button_clicked (Foreman.Services.Server.Context server_context) {
+    //      // TODO
+    //  }
 
     private void on_command_to_send (Foreman.Services.Server.Context server_context, string command) {
         Foreman.Core.Client.get_default ().server_manager.send_command (server_context.uuid, command);
@@ -198,7 +200,19 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
     }
 
     public void configure_selected_server () {
-        // TODO
+        Foreman.Views.ServerDetailView? selected_server = layout.get_visible_server ();
+        if (selected_server == null) {
+            debug ("No selected server to configure");
+            return;
+        }
+        if (configure_server_dialog == null) {
+            configure_server_dialog = new Foreman.Widgets.Dialogs.ConfigureServerDialog (this, selected_server.server_context);
+            configure_server_dialog.show_all ();
+            configure_server_dialog.destroy.connect (() => {
+                configure_server_dialog = null;
+            });
+        }
+        configure_server_dialog.present ();
     }
 
     public void delete_selected_server () {
@@ -314,6 +328,17 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
             warning ("EULA rejected");
         }
         return response;
+    }
+
+    public void show_help_dialog () {
+        if (help_dialog == null) {
+            help_dialog = new Foreman.Widgets.Dialogs.HelpDialog (this);
+            help_dialog.destroy.connect (() => {
+                help_dialog = null;
+            });
+            help_dialog.show_all ();
+        }
+        help_dialog.present ();
     }
 
     //  public void show_available_server_downloads_dialog () {

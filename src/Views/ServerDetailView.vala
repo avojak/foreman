@@ -370,8 +370,8 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
     public signal void start_button_clicked ();
     public signal void stop_button_clicked ();
     public signal void restart_button_clicked ();
-    public signal void delete_button_clicked ();
-    public signal void configure_button_clicked ();
+    //  public signal void delete_button_clicked ();
+    //  public signal void configure_button_clicked ();
     public signal void command_to_send (string command);
 
 }
