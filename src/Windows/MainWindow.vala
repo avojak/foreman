@@ -280,9 +280,9 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
 
         if (create_new_server_dialog == null) {
             create_new_server_dialog = new Foreman.Widgets.Dialogs.CreateNewServerDialog (this);
-            create_new_server_dialog.create_button_clicked.connect ((name, version) => {
+            create_new_server_dialog.create_button_clicked.connect ((name, version, properties) => {
                 create_new_server_dialog.close ();
-                create_new_server (name, version);
+                create_new_server (name, version, properties);
             });
             create_new_server_dialog.destroy.connect (() => {
                 create_new_server_dialog = null;
@@ -292,7 +292,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
         create_new_server_dialog.present ();
     }
 
-    private void create_new_server (string name, string version) {
+    private void create_new_server (string name, string version, Foreman.Models.ServerProperties properties) {
         if (!Foreman.Core.Client.get_default ().server_executable_repository.get_downloaded_executables ().has_key (version)) {
             Foreman.Core.Client.get_default ().server_executable_repository.download_server_executable_async.begin (version, null, (obj, res) => {
                 GLib.File? server_file = Foreman.Core.Client.get_default ().server_executable_repository.download_server_executable_async.end (res);
@@ -310,10 +310,10 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
                     return;
                 }
 
-                Foreman.Core.Client.get_default ().server_manager.create_server (name, version).start ();
+                Foreman.Core.Client.get_default ().server_manager.create_server (name, version, properties).start ();
             });
         } else {
-            Foreman.Core.Client.get_default ().server_manager.create_server (name, version).start ();
+            Foreman.Core.Client.get_default ().server_manager.create_server (name, version, properties).start ();
         }
 
     }

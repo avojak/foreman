@@ -174,11 +174,11 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
             orientation = Gtk.Orientation.VERTICAL,
             width_request = 200
         };
-        popover_grid.attach (configure_menu_item, 0, 0, 1, 1);
-        popover_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-            margin_top = 0
-        }, 0, 1, 1, 1);
-        popover_grid.attach (delete_menu_item, 0, 2, 1, 1);
+        //  popover_grid.attach (configure_menu_item, 0, 0);
+        //  popover_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
+        //      margin_top = 0
+        //  }, 0, 1);
+        popover_grid.attach (delete_menu_item, 0, 0);
         popover_grid.show_all ();
 
         var popover = new Gtk.Popover (null);
@@ -190,7 +190,7 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
     private Gtk.Button create_control_button (string icon_name, string label) {
         return new Gtk.Button () {
             always_show_image = true,
-            image = new Gtk.Image.from_icon_name (icon_name, Gtk.IconSize.SMALL_TOOLBAR),
+            image = new Gtk.Image.from_icon_name (icon_name, Gtk.IconSize.BUTTON),
             image_position = Gtk.PositionType.LEFT,
             label = label,
             tooltip_text = label,

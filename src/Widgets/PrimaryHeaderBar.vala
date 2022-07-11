@@ -80,7 +80,7 @@ public class Foreman.Widgets.PrimaryHeaderBar : Hdy.HeaderBar {
         settings_popover_grid.attach (preferences_menu_item, 0, 1, 1, 1);
         settings_popover_grid.attach (create_menu_separator (), 0, 2, 1, 1);
         settings_popover_grid.attach (help_menu_item, 0, 3, 1, 1);
-        settings_popover_grid.attach (create_menu_separator (), 0, 4, 1, 1);
+        settings_popover_grid.attach (create_menu_separator (), 0, 5, 1, 1);
         settings_popover_grid.attach (quit_menu_item, 0, 5, 1, 1);
         settings_popover_grid.show_all ();
 

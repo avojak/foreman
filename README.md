@@ -15,7 +15,8 @@
 
 Get up-and-running with a Minecraft server in moments. Foreman will pull the latest server executable, <!-- establish sensible default settings, -->and launch a new server for you. 
 
-Foreman is intended for those who want to run a Minecraft server on their computer without worrying about digging into the commandline, provisioning a server, or dealing with cloud hosting.
+Foreman is intended for those who want to run a Minecraft server on their computer without worrying about digging into the commandline, provisioning a server, or dealing with cloud hosting. It's ideal for setting up a server for your kids and family to use in your home without 
+connecting to a third-party server.
 
 <!-- | ![Screenshot](data/assets/screenshots/foreman-screenshot-01.png) | ![Screenshot](data/assets/screenshots/foreman-screenshot-02.png) |
 |------------------------------------------------------------------|------------------------------------------------------------------| -->

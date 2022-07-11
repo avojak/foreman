@@ -57,7 +57,7 @@ public class Foreman.Services.ServerManager : GLib.Object {
     }
 
     // TODO: Should probably make this async since there's a file I/O stuff going on the in background
-    public Foreman.Services.Server create_server (string name, string server_version) {
+    public Foreman.Services.Server create_server (string name, string server_version, Foreman.Models.ServerProperties properties) {
         // Create the server instance
         var server = new Foreman.Services.Server (name, server_version);
         connect_server_signals (server);
@@ -67,7 +67,10 @@ public class Foreman.Services.ServerManager : GLib.Object {
         Foreman.Core.Client.get_default ().server_executable_repository.copy_template (server_version, server.context.server_directory);
 
         // Lay down the properties file
-        // TODO
+        var target_properties_file = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, server.context.server_directory.get_path (), "server.properties"));
+        if (!properties.write_to_file (target_properties_file)) {
+            // TODO: Handle this error
+        }
 
         // Persist the state
         // TODO

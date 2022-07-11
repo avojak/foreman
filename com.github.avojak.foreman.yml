@@ -70,6 +70,14 @@ modules:
   #           tag: v1.8
   #           commit: 009ce9cd9b950ffa1f4f94c9436027b936850d0c
 
+  - name: libsemver
+    buildsystem: meson
+    sources:
+      - type: git
+        url: https://github.com/avojak/libsemver.git
+        tag: 1.0.0
+        commit: 03795ff37631d61a62653f087390385c7a044f19
+
   - name: iproute2
     buildsystem: autotools
     make-install-args:

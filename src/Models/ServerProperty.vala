@@ -22,8 +22,6 @@ public abstract class Foreman.Models.ServerProperty<T> : GLib.Object {
     public abstract void set_from_string (string str);
     public abstract string as_string ();
 
-    //  public static 
-
 }
 
 public class Foreman.Models.StringServerProperty : Foreman.Models.ServerProperty<string> {

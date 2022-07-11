@@ -7,6 +7,8 @@ public class Foreman.Widgets.Dialogs.PreferencesDialog : Hdy.Window {
 
     private static Gtk.CssProvider provider;
 
+    public unowned Foreman.Windows.MainWindow main_window { get; construct; }
+
     private Gtk.Stack stack;
 
     public PreferencesDialog (Foreman.Windows.MainWindow main_window) {
@@ -16,6 +18,7 @@ public class Foreman.Widgets.Dialogs.PreferencesDialog : Hdy.Window {
             application: Foreman.Application.get_instance (),
             resizable: true,
             transient_for: main_window,
+            main_window: main_window,
             //  modal: false
             border_width: 0,
             window_position: Gtk.WindowPosition.CENTER
@@ -85,7 +88,13 @@ public class Foreman.Widgets.Dialogs.PreferencesDialog : Hdy.Window {
         stack.add_named (new Foreman.Views.Settings.ModerationSettingsPage (), Foreman.Views.Settings.ModerationSettingsPage.NAME);
         stack.add_named (new Foreman.Views.Settings.JavaRuntimeSettingsPage (), Foreman.Views.Settings.JavaRuntimeSettingsPage.NAME);
 
-        resize (700, 600);
+        int width = 700;
+        int height = 600;
+        resize (width, height);
+        int parent_x, parent_y, parent_width, parent_height;
+        main_window.get_position (out parent_x, out parent_y);
+        main_window.get_size (out parent_width, out parent_height);
+        move (parent_x + (parent_width / 2) - (width / 2), parent_y + (parent_height / 2) - (height / 2));
 
         show_all ();
 

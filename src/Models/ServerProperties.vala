@@ -25,6 +25,7 @@ public class Foreman.Models.ServerProperties : GLib.Object {
     //  public Foreman.Models.ServerProperty<bool> enable_secure_profile = new Foreman.Models.BooleanServerProperty ("enable-secure-profile");
     public Foreman.Models.ServerProperty<bool> enforce_whitelist = new Foreman.Models.BooleanServerProperty ("enforce-whitelist");
     public Foreman.Models.ServerProperty<bool> force_gamemode = new Foreman.Models.BooleanServerProperty ("force-gamemode");
+    public Foreman.Models.ServerProperty<string> gamemode = new Foreman.Models.StringServerProperty ("gamemode");
     public Foreman.Models.ServerProperty<bool> generate_structures = new Foreman.Models.BooleanServerProperty ("generate-structures");
     public Foreman.Models.ServerProperty<bool> hardcore = new Foreman.Models.BooleanServerProperty ("hardcore");
     public Foreman.Models.ServerProperty<bool> hide_online_players = new Foreman.Models.BooleanServerProperty ("hide-online-players");
@@ -61,7 +62,7 @@ public class Foreman.Models.ServerProperties : GLib.Object {
     public string entity_broadcast_range_percentage { get; set; }
     //  public string force_gamemode { get; set; }
     public string function_permission_level { get; set; }
-    public string gamemode { get; set; }
+    //  public string gamemode { get; set; }
     //  public string generate_structures { get; set; }
     public string generator_settings { get; set; }
     //  public string hardcore { get; set; }
@@ -105,6 +106,32 @@ public class Foreman.Models.ServerProperties : GLib.Object {
     }
 
     /**
+     * Reads in values from the given properties file.
+     */
+    public Foreman.Models.ServerProperties.from_file (GLib.File file) {
+        try {
+            var input_stream = new GLib.DataInputStream (file.read ());
+            string? line = null;
+            while ((line = input_stream.read_line ().strip ()) != null) {
+                // Ignore empty lines
+                if (line.length == 0) {
+                    continue;
+                }
+                // Ignore comments
+                if (line.has_prefix ("#")) {
+                    continue;
+                }
+                string[] tokens = line.split ("=", 2);
+                string key = tokens[0];
+                string value = tokens[1];
+                this.properties_mapping.get (key).set_from_string (value);
+            }
+        } catch (GLib.Error e) {
+            warning (e.message);
+        }
+    }
+
+    /**
      * Updates the given properties file with the current values in the model. This ensures
      * that properties not already present in the properties file (e.g. properties that have
      * been deprecated or are not supported by the particular version of the server) will not
@@ -133,33 +160,13 @@ public class Foreman.Models.ServerProperties : GLib.Object {
             warning (e.message);
             return false;
         }
-        return true;
-    }
-
-    /**
-     * Reads in values from the given properties file.
-     */
-    public Foreman.Models.ServerProperties.from_file (GLib.File file) {
         try {
-            var input_stream = new GLib.DataInputStream (file.read ());
-            string? line = null;
-            while ((line = input_stream.read_line ().strip ()) != null) {
-                // Ignore empty lines
-                if (line.length == 0) {
-                    continue;
-                }
-                // Ignore comments
-                if (line.has_prefix ("#")) {
-                    continue;
-                }
-                string[] tokens = line.split ("=", 2);
-                string key = tokens[0];
-                string value = tokens[1];
-                this.properties_mapping.get (key).set_from_string (value);
-            }
+            file.replace_contents (sb.data, null, false, GLib.FileCreateFlags.NONE, null);
         } catch (GLib.Error e) {
             warning (e.message);
+            return false;
         }
+        return true;
     }
 
 }

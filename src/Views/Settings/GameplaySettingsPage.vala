@@ -22,8 +22,6 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
         Object (
             header: null,
             icon_name: "input-gaming",
-            //  status: Foreman.Services.Server.State.NOT_RUNNING.get_display_string (),
-            //  status_type: Granite.SettingsPage.StatusType.OFFLINE,
             title: _("Gameplay"),
             description: _("Default gameplay preferences for new servers"),
             activatable: false,
@@ -32,7 +30,7 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
     }
 
     construct {
-        var general_header_label = new Granite.HeaderLabel (_("Game Mode"));
+        var game_mode_header_label = new Granite.HeaderLabel (_("Game Mode"));
 
         game_mode_button = new Granite.Widgets.ModeButton () {
             margin = 12
@@ -99,7 +97,7 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
             update_resource_pack_required_sensitivity ();
             Foreman.Application.settings.set_string ("resource-pack", resource_pack_file_entry.get_uri ());
         });
-        var remove_resource_pack_button = new Gtk.Button.with_label ("Remove");
+        var remove_resource_pack_button = new Gtk.Button.with_label (_("Remove"));
         remove_resource_pack_button.clicked.connect (() => {
             resource_pack_file_entry.unselect_all ();
             require_resource_pack_switch.set_active (false);
@@ -130,72 +128,16 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
         resource_pack_prompt_entry = new Gtk.Entry ();
         Foreman.Application.settings.bind ("resource-pack-prompt", resource_pack_prompt_entry, "text", GLib.SettingsBindFlags.DEFAULT);
 
-        // TODO: Connect to the signal for this entry
-
-        //  var game_data_header_label = new Granite.HeaderLabel (_("Game Data"));
-
-        //  var user_rom_dir_label = new Gtk.Label (_("ROM directory:")) {
-        //      halign = Gtk.Align.END
-        //  };
-        //  user_rom_dir_entry = new Gtk.FileChooserButton (_("Select Your ROM Directory\u2026"), Gtk.FileChooserAction.SELECT_FOLDER) {
-        //      //  hexpand = true
-        //      halign = Gtk.Align.START
-        //  };
-        //  user_rom_dir_entry.set_uri (GLib.File.new_for_path (Replay.Application.settings.user_rom_directory).get_uri ());
-        //  user_rom_dir_entry.file_set.connect (() => {
-        //      debug (user_rom_dir_entry.get_uri ());
-        //      Replay.Application.settings.user_rom_directory = GLib.File.new_for_uri (user_rom_dir_entry.get_uri ()).get_path ();
-        //      // TODO: Notify that this was changed so we can reload the library
-        //  });
-
-        //  var save_data_dir_label = new Gtk.Label (_("Save data directory:")) {
-        //      halign = Gtk.Align.END
-        //  };
-        //  save_data_dir_entry = new Gtk.FileChooserButton (_("Select Your Save Data Directory\u2026"), Gtk.FileChooserAction.SELECT_FOLDER) {
-        //      //  hexpand = true
-        //      halign = Gtk.Align.START
-        //  };
-        //  save_data_dir_entry.set_uri (GLib.File.new_for_path (Replay.Application.settings.user_save_directory).get_uri ());
-        //  save_data_dir_entry.file_set.connect (() => {
-        //      debug (save_data_dir_entry.get_uri ());
-        //      Replay.Application.settings.user_save_directory = GLib.File.new_for_uri (save_data_dir_entry.get_uri ()).get_path ();
-        //      // TODO
-        //  });
-
-        //  var playback_header_label = new Granite.HeaderLabel (_("Playback"));
-
-        //  var bios_label = new Gtk.Label (_("Boot BIOS:")) {
-        //      halign = Gtk.Align.END
-        //  };
-        //  var bios_switch = new Gtk.Switch () {
-        //      halign = Gtk.Align.START,
-        //      valign = Gtk.Align.CENTER
-        //  };
-        //  Replay.Application.settings.bind ("emu-boot-bios", bios_switch, "active", GLib.SettingsBindFlags.DEFAULT);
-
-        //  var focus_lost_label = new Gtk.Label (_("Pause on focus lost:")) {
-        //      halign = Gtk.Align.END
-        //  };
-        //  var focus_lost_switch = new Gtk.Switch () {
-        //      halign = Gtk.Align.START,
-        //      valign = Gtk.Align.CENTER
-        //  };
-        //  Replay.Application.settings.bind ("handle-window-focus-change", focus_lost_switch, "active", GLib.SettingsBindFlags.DEFAULT);
-
-        //  var speed_label = new Gtk.Label (_("Emulation speed:")) {
-        //      halign = Gtk.Align.END
-        //  };
-        //  var speed_spin_button = create_spin_button (0.1, 3.0, 1.0);
-
         var main_grid = new Gtk.Grid () {
-            margin_start = 30,
-            margin_end = 30,
+            margin_start = 10,
+            margin_end = 10,
             margin_bottom = 10,
             column_spacing = 10,
-            row_spacing = 10
+            row_spacing = 10,
+            column_homogeneous = false
         };
 
-        main_grid.attach (general_header_label, 0, 0, 2);
+        main_grid.attach (game_mode_header_label, 0, 0, 2);
         main_grid.attach (game_mode_button, 0, 1, 2);
         main_grid.attach (force_game_mode_label, 0, 2);
         main_grid.attach (force_game_mode_switch, 1, 2);

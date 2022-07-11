@@ -58,6 +58,16 @@ public class Foreman.Application : Gtk.Application {
 
         client.server_executable_repository.refresh.begin ();
 
+        //  var socket_client = new GLib.SocketClient ();
+        //  try {
+        //      var connection = socket_client.connect (new GLib.NetworkAddress ("launchermeta.mojang.com", 443));
+        //      debug (((GLib.InetSocketAddress) connection.get_local_address ()).get_address ().to_string ());
+        //  } catch (GLib.Error e) {
+        //      warning (e.message);
+        //  }
+        
+        //  debug (address.get_family ().to_string ());
+
         //  client.server_download_service.retrieve_available_servers.begin ((obj, res) => {
         //      Foreman.Models.VersionManifest? version_manifest = client.server_download_service.retrieve_available_servers.end (res);
         //      if (version_manifest == null) {

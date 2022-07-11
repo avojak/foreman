@@ -158,8 +158,8 @@
       <summary>Sets a world seed for the player's world, as in Singleplayer.</summary>
       <description>The world generates with a random seed if left blank.</description>
     </key>
-    <key name="level-type" type="s">
-      <default>"default"</default>
+    <key name="level-type" type="i">
+      <default>0</default>
       <summary>Determines the type of map / the world preset that is generated.</summary>
       <description>The world generates with a random seed if left blank.</description>
     </key>

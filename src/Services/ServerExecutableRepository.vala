@@ -80,7 +80,21 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
     }
 
     public string? get_latest_downloaded_release_version () {
-        return "1.18.2"; // TODO
+        var versions = new Gee.ArrayList<SemVer.Version> ();
+        foreach (var entry in downloaded_executables) {
+            try {
+                versions.add (new SemVer.Version.from_string (entry.key));
+            } catch (SemVer.VersionParseError e) {
+                warning (e.message);
+            }
+        }
+        if (versions.size == 0) {
+            return null;
+        }
+        versions.sort ((a, b) => {
+            return a.compare_to (b);
+        });
+        return versions.get (0).to_string ();
     }
 
     public async void refresh () {

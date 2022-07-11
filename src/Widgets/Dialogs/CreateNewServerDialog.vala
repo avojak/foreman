@@ -8,7 +8,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
     private Granite.ValidatedEntry name_entry;
     private Gtk.ListStore list_store;
     private Gtk.ComboBox version_combo;
-    private Granite.Widgets.ModeButton game_mode_button;
+    private Granite.Widgets.ModeButton gamemode_button;
     private Granite.Widgets.ModeButton difficulty_button;
     private Gtk.Button create_button;
 
@@ -103,14 +103,14 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         var game_mode_label = new Gtk.Label (_("Game mode:")) {
             halign = Gtk.Align.END
         };
-        game_mode_button = new Granite.Widgets.ModeButton () {
+        gamemode_button = new Granite.Widgets.ModeButton () {
             //  margin = 12
         };
-        game_mode_button.append_text (Foreman.Models.GameMode.SURVIVAL.get_display_string ());
-        game_mode_button.append_text (Foreman.Models.GameMode.CREATIVE.get_display_string ());
-        game_mode_button.append_text (Foreman.Models.GameMode.ADVENTURE.get_display_string ());
-        game_mode_button.append_text (Foreman.Models.GameMode.SPECTATOR.get_display_string ());
-        game_mode_button.selected = Foreman.Application.settings.get_int ("gamemode");
+        gamemode_button.append_text (Foreman.Models.GameMode.SURVIVAL.get_display_string ());
+        gamemode_button.append_text (Foreman.Models.GameMode.CREATIVE.get_display_string ());
+        gamemode_button.append_text (Foreman.Models.GameMode.ADVENTURE.get_display_string ());
+        gamemode_button.append_text (Foreman.Models.GameMode.SPECTATOR.get_display_string ());
+        gamemode_button.selected = Foreman.Application.settings.get_int ("gamemode");
 
         var difficulty_label = new Gtk.Label (_("Difficulty:")) {
             halign = Gtk.Align.END
@@ -124,14 +124,25 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         difficulty_button.append_text (Foreman.Models.Difficulty.HARD.get_display_string ());
         difficulty_button.selected = Foreman.Application.settings.get_int ("difficulty");
 
+        var customize_button = new Gtk.Button () {
+            halign = Gtk.Align.CENTER,
+            always_show_image = true,
+            image = new Gtk.Image.from_icon_name ("preferences-other-symbolic", Gtk.IconSize.BUTTON),
+            image_position = Gtk.PositionType.LEFT,
+            label = _("Customize…"),
+            tooltip_text = _("Show more customization options"),
+            width_request = 125 // Make the button a bit larger for emphasis
+        };
+
         form_grid.attach (name_label, 0, 0);
         form_grid.attach (name_entry, 1, 0);
         form_grid.attach (version_label, 0, 1);
         form_grid.attach (version_combo, 1, 1);
         form_grid.attach (game_mode_label, 0, 2);
-        form_grid.attach (game_mode_button, 1, 2);
+        form_grid.attach (gamemode_button, 1, 2);
         form_grid.attach (difficulty_label, 0, 3);
         form_grid.attach (difficulty_button, 1, 3);
+        form_grid.attach (customize_button, 0, 4, 2);
 
         // Connect to signals to determine whether the connect button should be sensitive
         // Note: Can't use the preferred Granite.ValidatedEntry way, because that seems to limit
@@ -200,7 +211,8 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
 
     private Foreman.Models.ServerProperties create_properties () {
         var properties = new Foreman.Models.ServerProperties.from_defaults ();
-        properties.difficulty.set_from_string (((Foreman.Models.GameMode) difficulty_button.selected).get_short_name ());
+        properties.difficulty.set_from_string (((Foreman.Models.Difficulty) difficulty_button.selected).get_short_name ());
+        properties.gamemode.set_from_string (((Foreman.Models.GameMode) gamemode_button.selected).get_short_name ());
         return properties;
     }
 
