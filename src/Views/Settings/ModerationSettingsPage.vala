@@ -19,7 +19,7 @@ public class Foreman.Views.Settings.ModerationSettingsPage : Granite.SimpleSetti
     }
 
     construct {
-        
+
     }
 
 }

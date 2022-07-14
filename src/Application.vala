@@ -65,7 +65,7 @@ public class Foreman.Application : Gtk.Application {
         //  } catch (GLib.Error e) {
         //      warning (e.message);
         //  }
-        
+
         //  debug (address.get_family ().to_string ());
 
         //  client.server_download_service.retrieve_available_servers.begin ((obj, res) => {

@@ -32,7 +32,7 @@ public class Foreman.Views.Settings.NetworkSettingsPage : Granite.SimpleSettings
          * Connectivity section
          */
         var connectivity_header_label = new Granite.HeaderLabel (_("Connectivity"));
-    
+
         var ip_label = new Gtk.Label (_("IP address:")) {
             halign = Gtk.Align.END
         };
@@ -146,7 +146,7 @@ public class Foreman.Views.Settings.NetworkSettingsPage : Granite.SimpleSettings
         main_grid.attach (enable_query_switch, 1, 5);
         main_grid.attach (query_port_label, 0, 6);
         main_grid.attach (query_port_entry, 1, 6);
-        
+
         main_grid.attach (rcon_header_label, 0, 7, 2);
         main_grid.attach (enable_rcon_label, 0, 8);
         main_grid.attach (enable_rcon_switch, 1, 8);

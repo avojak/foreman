@@ -304,7 +304,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
                         if (server_file == null) {
                             debug ("Error downloading server file");
                         }
-        
+
                         // Show EULA dialog since this is a new download (Maybe change this to a one-time thing? Should follow how it would be done if running manually)
                         if (show_eula_dialog ("https://account.mojang.com/documents/minecraft_eula") != Gtk.ResponseType.ACCEPT) {
                             // TODO
@@ -314,7 +314,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
                             // TODO: This is an error
                             return;
                         }
-        
+
                         Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
                     });
                 } else {
@@ -328,7 +328,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
                         if (server_file == null) {
                             debug ("Error downloading server file");
                         }
-        
+
                         // Show EULA dialog since this is a new download (Maybe change this to a one-time thing? Should follow how it would be done if running manually)
                         if (show_eula_dialog ("https://www.minecraft.net/en-us/terms") != Gtk.ResponseType.ACCEPT) {
                             // TODO
@@ -338,7 +338,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
                         //      // TODO: This is an error
                         //      return;
                         //  }
-        
+
                         Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
                     });
                 } else {
