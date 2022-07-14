@@ -8,10 +8,10 @@ public class Foreman.Services.BedrockServer : Foreman.Services.Server<Foreman.Mo
     private const string STARTUP_CMD = "./bedrock_server";
 
     public BedrockServer (string name, string server_version) {
-        this.new_for_context (new Context.new_for_version (name, Foreman.Models.ServerType.BEDROCK, server_version));
+        this.new_for_context (new Foreman.Services.Server.Context.new_for_version (name, Foreman.Models.ServerType.BEDROCK, server_version));
     }
 
-    public BedrockServer.new_for_context (Context context) {
+    public BedrockServer.new_for_context (Foreman.Services.Server.Context context) {
         Object (
             context: context
         );
