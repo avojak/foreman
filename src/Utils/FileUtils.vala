@@ -41,4 +41,45 @@ public class Foreman.Utils.FileUtils {
         }
     }
 
+    public static void extract_archive (GLib.File archive_file) {
+        Archive.ExtractFlags flags;
+        flags = Archive.ExtractFlags.TIME;
+        flags |= Archive.ExtractFlags.PERM;
+        flags |= Archive.ExtractFlags.ACL;
+        flags |= Archive.ExtractFlags.FFLAGS;
+
+        Archive.Read archive = new Archive.Read ();
+        archive.support_format_all ();
+        archive.support_filter_all ();
+
+        Archive.WriteDisk extractor = new Archive.WriteDisk ();
+        extractor.set_options (flags);
+        extractor.set_standard_lookup ();
+
+        if (archive.open_filename (archive_file.get_path (), 10240) != Archive.Result.OK) {
+            warning ("Error opening %s: %s (%d)", archive_file.get_path (), archive.error_string (), archive.errno ());
+            return;
+        }
+
+        unowned Archive.Entry entry;
+        Archive.Result last_result;
+        while ((last_result = archive.next_header (out entry)) == Archive.Result.OK) {
+            entry.set_pathname (archive_file.get_parent ().get_path () + "/" + entry.pathname ());
+            if (extractor.write_header (entry) != Archive.Result.OK) {
+                continue;
+            }
+            uint8[] buffer;
+            Archive.int64_t offset;
+            while (archive.read_data_block (out buffer, out offset) == Archive.Result.OK) {
+                if (extractor.write_data_block (buffer, offset) != Archive.Result.OK) {
+                    break;
+                }
+            }
+        }
+
+        if (last_result != Archive.Result.EOF) {
+            warning ("Error extracting archive: %s (%d)", archive.error_string (), archive.errno ());
+        }
+    }
+
 }

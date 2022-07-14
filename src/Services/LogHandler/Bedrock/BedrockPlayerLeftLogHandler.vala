@@ -3,9 +3,9 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
- public class Foreman.Services.PlayerLeftLogHandler : Foreman.Services.LogHandler {
+ public class Foreman.Services.BedrockPlayerLeftLogHandler : Foreman.Services.LogHandler<Foreman.Models.BedrockLogMessage> {
 
-    private const string REGEX_STR = """^(?P<username>.*) left the game$""";
+    private const string REGEX_STR = """^Player disconnected: (?P<username>.*), xuid: (?<xuid>.*)$""";
 
     private static GLib.Regex regex;
 
@@ -17,11 +17,13 @@
         }
     }
 
-    protected override bool do_handle (Foreman.Models.LogMessage message, Foreman.Services.LogHandler.Source source) {
+    protected override bool do_handle (Foreman.Models.BedrockLogMessage message, Foreman.Services.LogHandler.Source source) {
         string? username = null;
+        string? xuid = null;
         try {
             regex.replace_eval (message.message, -1, 0, GLib.RegexMatchFlags.ANCHORED, (match_info, result) => {
                 username = match_info.fetch_named ("username");
+                xuid = match_info.fetch_named ("xuid");
                 return false;
             });
             player_left (username);
@@ -31,7 +33,7 @@
         return true;
     }
 
-    protected override bool can_handle (Foreman.Models.LogMessage message, Foreman.Services.LogHandler.Source source) {
+    protected override bool can_handle (Foreman.Models.BedrockLogMessage message, Foreman.Services.LogHandler.Source source) {
         return message.message != null && regex.match (message.message);
     }
 

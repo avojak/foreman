@@ -27,7 +27,7 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
             status: Foreman.Services.Server.State.NOT_RUNNING.get_display_string (),
             status_type: Granite.SettingsPage.StatusType.OFFLINE,
             title: server_context.name,
-            description: "v%s".printf (server_context.server_version),
+            description: "%s v%s".printf (server_context.server_type.get_display_string (), server_context.server_version),
             activatable: false,
             expand: true,
             server_context: server_context

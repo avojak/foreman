@@ -3,21 +3,24 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
- public class Foreman.Widgets.Dialogs.MojangEULADialog : Granite.MessageDialog {
+public class Foreman.Widgets.Dialogs.MojangEULADialog : Granite.MessageDialog {
 
-    public MojangEULADialog (Foreman.Windows.MainWindow main_window) {
+    public string url { get; construct; }
+
+    public MojangEULADialog (Foreman.Windows.MainWindow main_window, string url) {
         Object (
             primary_text: _("End User License Agreement"),
             secondary_text: _("By checking the box below you are indicating your agreement to the Minecraft EULA."),
             image_icon: new GLib.ThemedIcon ("text-x-copying"),
             badge_icon: new GLib.ThemedIcon ("dialog-information"),
             modal: true,
-            transient_for: main_window
+            transient_for: main_window,
+            url: url
         );
     }
 
     construct {
-        var eula_link = new Gtk.LinkButton.with_label ("https://account.mojang.com/documents/minecraft_eula", "Minecraft End User License Agreement");
+        var eula_link = new Gtk.LinkButton.with_label (url, "Minecraft End User License Agreement");
         var check_button = new Gtk.CheckButton.with_label (_("I accept the terms in the Minecraft EULA"));
 
         var custom_content = new Gtk.Grid () {

@@ -3,9 +3,9 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Foreman.Services.SinkLogHandler : Foreman.Services.LogHandler {
+public class Foreman.Services.BedrockSinkLogHandler : Foreman.Services.LogHandler<Foreman.Models.BedrockLogMessage> {
 
-    protected override bool do_handle (Foreman.Models.LogMessage message, Foreman.Services.LogHandler.Source source) {
+    protected override bool do_handle (Foreman.Models.BedrockLogMessage message, Foreman.Services.LogHandler.Source source) {
         switch (source) {
             case STDOUT:
                 if (message.log_level != null) {
@@ -36,7 +36,7 @@ public class Foreman.Services.SinkLogHandler : Foreman.Services.LogHandler {
         return true;
     }
 
-    protected override bool can_handle (Foreman.Models.LogMessage message, Foreman.Services.LogHandler.Source source) {
+    protected override bool can_handle (Foreman.Models.BedrockLogMessage message, Foreman.Services.LogHandler.Source source) {
         return true;
     }
 

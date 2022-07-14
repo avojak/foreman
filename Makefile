@@ -51,6 +51,7 @@ translations: $(NINJA_BUILD_FILE)
 
 .PHONY: clean
 clean:
+	rm -rf ./.flatpak/
 	rm -rf ./.flatpak-builder/
 	rm -rf ./build/
 	rm -rf ./builddir/

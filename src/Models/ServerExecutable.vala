@@ -3,10 +3,9 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Foreman.Models.ServerExecutable : GLib.Object {
+public abstract class Foreman.Models.ServerExecutable : GLib.Object {
 
     public string version { get; set; }
-    public Foreman.Models.VersionDetails.Type version_type { get; set; }
     public GLib.File directory { get; set; }
 
 }

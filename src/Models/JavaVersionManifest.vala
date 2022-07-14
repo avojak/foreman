@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Foreman.Models.VersionManifest : GLib.Object {
+public class Foreman.Models.JavaVersionManifest : GLib.Object {
 
     public class Latest : GLib.Object {
 
@@ -91,8 +91,8 @@ public class Foreman.Models.VersionManifest : GLib.Object {
     public Latest latest { get; set; }
     public Gee.Map<string, Version> versions { get; set; }
 
-    public static VersionManifest from_json (Json.Object json) {
-        var obj = new VersionManifest ();
+    public static JavaVersionManifest from_json (Json.Object json) {
+        var obj = new JavaVersionManifest ();
         foreach (unowned string name in json.get_members ()) {
             switch (name) {
                 case "latest":

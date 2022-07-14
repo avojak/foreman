@@ -35,7 +35,17 @@ public class Foreman.Services.ServerManager : GLib.Object {
 
         // Load up from the database
         foreach (var server_context in Foreman.Services.ServerRepository.get_default ().get_servers ()) {
-            var server = new Foreman.Services.Server.new_for_context (server_context);
+            Foreman.Services.Server server;
+            switch (server_context.server_type) {
+                case JAVA_EDITION:
+                    server = new Foreman.Services.JavaEditionServer.new_for_context (server_context);
+                    break;
+                case BEDROCK:
+                    server = new Foreman.Services.BedrockServer.new_for_context (server_context);
+                    break;
+                default:
+                    assert_not_reached ();
+            }
             connect_server_signals (server);
             servers.set (server_context.uuid, server);
         }
@@ -57,14 +67,24 @@ public class Foreman.Services.ServerManager : GLib.Object {
     }
 
     // TODO: Should probably make this async since there's a file I/O stuff going on the in background
-    public Foreman.Services.Server create_server (string name, string server_version, Foreman.Models.ServerProperties properties) {
+    public Foreman.Services.Server create_server (string name, Foreman.Models.ServerType server_type, string server_version, Foreman.Models.ServerProperties properties) {
         // Create the server instance
-        var server = new Foreman.Services.Server (name, server_version);
+        Foreman.Services.Server server;
+        switch (server_type) {
+            case JAVA_EDITION:
+                server = new Foreman.Services.JavaEditionServer (name, server_version);
+                break;
+            case BEDROCK:
+                server = new Foreman.Services.BedrockServer (name, server_version);
+                break;
+            default:
+                assert_not_reached ();
+        }
         connect_server_signals (server);
         servers.set (server.context.uuid, server);
 
         // Copy the template to create the new server directory
-        Foreman.Core.Client.get_default ().server_executable_repository.copy_template (server_version, server.context.server_directory);
+        Foreman.Core.Client.get_default ().server_executable_repository.copy_template (server_type, server_version, server.context.server_directory);
 
         // Lay down the properties file
         var target_properties_file = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, server.context.server_directory.get_path (), "server.properties"));

@@ -5,21 +5,25 @@
 
 public class Foreman.Services.ServerExecutableRepository : GLib.Object {
 
-    private const string VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
+    private const string JAVA_VERSION_MANIFEST_URL = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
     private const string EULA_FILENAME = "eula.txt";
+    private const string BEDROCK_DOWNLOAD_URL_FORMAT = "https://minecraft.azureedge.net/bin-linux/bedrock-server-%s.zip";
 
     private static GLib.Once<Foreman.Services.ServerExecutableRepository> instance;
     public static unowned Foreman.Services.ServerExecutableRepository get_default () {
         return instance.once (() => { return new Foreman.Services.ServerExecutableRepository (); });
     }
 
-    public static string server_executable_dir_path = GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, GLib.Environment.get_user_config_dir (), "server_executables");
+    public static string java_server_executable_dir_path = GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, GLib.Environment.get_user_config_dir (), "java_server_executables");
+    public static string bedrock_server_executable_dir_path = GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, GLib.Environment.get_user_config_dir (), "bedrock_server_executables");
 
     public Foreman.Services.SQLClient sql_client { get; construct; }
 
-    private Foreman.Models.VersionManifest? version_manifest;
+    private Foreman.Models.JavaVersionManifest? java_version_manifest;
+    private string? bedrock_version;
     private GLib.DateTime? last_updated;
-    private Gee.Map<string, Foreman.Models.ServerExecutable> downloaded_executables;
+    private Gee.Map<string, Foreman.Models.JavaServerExecutable> downloaded_java_executables;
+    private Gee.Map<string, Foreman.Models.BedrockServerExecutable> downloaded_bedrock_executables;
 
     private ServerExecutableRepository () {
         Object (
@@ -28,21 +32,35 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
     }
 
     construct {
-        // Establish the directory for server executables if not already present
-        var server_executable_dir = GLib.File.new_for_path (server_executable_dir_path);
-        if (!server_executable_dir.query_exists ()) {
+        // Establish the directory for Java Edition server executables if not already present
+        var java_server_executable_dir = GLib.File.new_for_path (java_server_executable_dir_path);
+        if (!java_server_executable_dir.query_exists ()) {
             try {
-                server_executable_dir.make_directory ();
+                java_server_executable_dir.make_directory ();
+            } catch (GLib.Error e) {
+                warning (e.message);
+            }
+        }
+        var bedrock_server_executable_dir = GLib.File.new_for_path (bedrock_server_executable_dir_path);
+        if (!bedrock_server_executable_dir.query_exists ()) {
+            try {
+                bedrock_server_executable_dir.make_directory ();
             } catch (GLib.Error e) {
                 warning (e.message);
             }
         }
 
         // Load up the downloaded executables from the database
-        downloaded_executables = new Gee.HashMap<string, Foreman.Models.ServerExecutable> ();
+        downloaded_java_executables = new Gee.HashMap<string, Foreman.Models.JavaServerExecutable> ();
         lock (sql_client) {
-            foreach (var executable in sql_client.get_server_executables ()) {
-                downloaded_executables.set (executable.version, executable);
+            foreach (var executable in sql_client.get_java_server_executables ()) {
+                downloaded_java_executables.set (executable.version, executable);
+            }
+        }
+        downloaded_bedrock_executables = new Gee.HashMap<string, Foreman.Models.BedrockServerExecutable> ();
+        lock (sql_client) {
+            foreach (var executable in sql_client.get_bedrock_server_executables ()) {
+                downloaded_bedrock_executables.set (executable.version, executable);
             }
         }
         //  try {
@@ -50,38 +68,49 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
         //      for (GLib.FileInfo? info = enumerator.next_file (); info != null; info = enumerator.next_file ()) {
         //          var executable_directory = GLib.File.new_for_path (GLib.Path.build_filename (server_executable_dir.get_path (), info.get_name ()));
         //          if (executable_directory.query_file_type (GLib.FileQueryInfoFlags.NONE) == GLib.FileType.DIRECTORY) {
-        //              downloaded_executables.set (info.get_name (), executable_directory);
+        //              downloaded_java_executables.set (info.get_name (), executable_directory);
         //          }
         //      }
         //  } catch (GLib.Error e) {
         //      warning (e.message);
         //  }
-        debug ("Downloaded server versions: %s", downloaded_executables.size == 0 ? "none" : string.joinv (", ", downloaded_executables.keys.to_array ()));
+        debug ("Downloaded Java server versions: %s", downloaded_java_executables.size == 0 ? "none" : string.joinv (", ", downloaded_java_executables.keys.to_array ()));
+        debug ("Downloaded Bedrock server versions: %s", downloaded_bedrock_executables.size == 0 ? "none" : string.joinv (", ", downloaded_bedrock_executables.keys.to_array ()));
     }
 
-    public string? get_latest_release_version () {
-        if (version_manifest == null) {
+    public string? get_latest_java_release_version () {
+        if (java_version_manifest == null) {
             return null;
         }
-        return version_manifest.latest.release;
+        return java_version_manifest.latest.release;
     }
 
-    public string? get_latest_snapshot_version () {
-        if (version_manifest == null) {
+    public string? get_latest_java_snapshot_version () {
+        if (java_version_manifest == null) {
             return null;
         }
-        return version_manifest.latest.snapshot;
+        return java_version_manifest.latest.snapshot;
     }
 
-    public Gee.HashMap<string, Foreman.Models.ServerExecutable> get_downloaded_executables () {
-        var downloaded = new Gee.HashMap<string, Foreman.Models.ServerExecutable> ();
-        downloaded.set_all (downloaded_executables);
+    public string? get_latest_bedrock_version () {
+        return bedrock_version;
+    }
+
+    public Gee.HashMap<string, Foreman.Models.JavaServerExecutable> get_downloaded_java_executables () {
+        var downloaded = new Gee.HashMap<string, Foreman.Models.JavaServerExecutable> ();
+        downloaded.set_all (downloaded_java_executables);
+        return downloaded;
+    }
+
+    public Gee.HashMap<string, Foreman.Models.BedrockServerExecutable> get_downloaded_bedrock_executables () {
+        var downloaded = new Gee.HashMap<string, Foreman.Models.BedrockServerExecutable> ();
+        downloaded.set_all (downloaded_bedrock_executables);
         return downloaded;
     }
 
     public string? get_latest_downloaded_release_version () {
         var versions = new Gee.ArrayList<SemVer.Version> ();
-        foreach (var entry in downloaded_executables) {
+        foreach (var entry in downloaded_java_executables) {
             try {
                 versions.add (new SemVer.Version.from_string (entry.key));
             } catch (SemVer.VersionParseError e) {
@@ -100,40 +129,37 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
     public async void refresh () {
         GLib.SourceFunc callback = refresh.callback;
 
-        Foreman.Models.VersionManifest? result = null;
+        Foreman.Models.JavaVersionManifest? java_result = null;
+        string? bedrock_result = null;
         new GLib.Thread<bool> ("download-version-manifest", () => {
-            result = download_version_manifest ();
+            java_result = download_java_version_manifest ();
+            bedrock_result = get_latest_available_bedrock_version ();
             Idle.add ((owned) callback);
             return true;
         });
         yield;
 
-        version_manifest = result;
+        java_version_manifest = java_result;
+        bedrock_version = bedrock_result;
         last_updated = new DateTime.now ();
 
-        if (version_manifest != null) {
-            debug ("Latest release: %s", version_manifest.latest.release);
-            debug ("Latest snapshot: %s", version_manifest.latest.snapshot);
+        if (java_version_manifest != null) {
+            debug ("Latest Java Edition release: %s", java_version_manifest.latest.release);
+            debug ("Latest Java Edition snapshot: %s", java_version_manifest.latest.snapshot);
+        }
+        if (bedrock_version != null) {
+            debug ("Latest Bedrock version: %s", bedrock_version);
         }
 
         // TODO: Check if latest release is newer than our latest downloaded
     }
 
-    private Foreman.Models.VersionManifest? download_version_manifest () {
-        Soup.Session session = new Soup.Session () {
-            use_thread_context = true
-        };
+    private Foreman.Models.JavaVersionManifest? download_java_version_manifest () {
         try {
-            Soup.Request request = session.request (VERSION_MANIFEST_URL);
-            GLib.DataInputStream data_stream = new GLib.DataInputStream (request.send ());
-            GLib.StringBuilder string_builder = new GLib.StringBuilder ();
-            string? line;
-            while ((line = data_stream.read_line ()) != null) {
-                string_builder.append (line);
-            }
-            Foreman.Models.VersionManifest? manifest = Foreman.Utils.JsonUtils.parse_json_obj (string_builder.str, (json_obj) => {
-                return Foreman.Models.VersionManifest.from_json (json_obj);
-            }) as Foreman.Models.VersionManifest;
+            string result = Foreman.Utils.HttpUtils.get_as_string (JAVA_VERSION_MANIFEST_URL);
+            Foreman.Models.JavaVersionManifest? manifest = Foreman.Utils.JsonUtils.parse_json_obj (result, (json_obj) => {
+                return Foreman.Models.JavaVersionManifest.from_json (json_obj);
+            }) as Foreman.Models.JavaVersionManifest;
             //  if (manifest == null) {
                 //  Idle.add (() => {
                 //      var message_dialog = new Granite.MessageDialog.with_image_from_icon_name ("Unable to fetch available servers", "Unable to parse the response from the server", "dialog-error", Gtk.ButtonsType.CLOSE);
@@ -156,21 +182,12 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
         return null;
     }
 
-    private Foreman.Models.VersionDetails? download_version_details (string url) {
-        Soup.Session session = new Soup.Session () {
-            use_thread_context = true
-        };
+    private Foreman.Models.JavaVersionDetails? download_java_version_details (string url) {
         try {
-            Soup.Request request = session.request (url);
-            GLib.DataInputStream data_stream = new GLib.DataInputStream (request.send ());
-            GLib.StringBuilder string_builder = new GLib.StringBuilder ();
-            string? line;
-            while ((line = data_stream.read_line ()) != null) {
-                string_builder.append (line);
-            }
-            Foreman.Models.VersionDetails? details = Foreman.Utils.JsonUtils.parse_json_obj (string_builder.str, (json_obj) => {
-                return Foreman.Models.VersionDetails.from_json (json_obj);
-            }) as Foreman.Models.VersionDetails;
+            string result = Foreman.Utils.HttpUtils.get_as_string (url);
+            Foreman.Models.JavaVersionDetails? details = Foreman.Utils.JsonUtils.parse_json_obj (result, (json_obj) => {
+                return Foreman.Models.JavaVersionDetails.from_json (json_obj);
+            }) as Foreman.Models.JavaVersionDetails;
             if (details == null) {
                 //  Idle.add (() => {
                 //      var message_dialog = new Granite.MessageDialog.with_image_from_icon_name ("Unable to fetch version details", "Unable to parse the response from the server", "dialog-error", Gtk.ButtonsType.CLOSE);
@@ -193,8 +210,8 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
         return null;
     }
 
-    public async GLib.File? download_server_executable_async (string version, GLib.Cancellable? cancellable = null) {
-        GLib.SourceFunc callback = download_server_executable_async.callback;
+    public async GLib.File? download_java_server_executable_async (string version, GLib.Cancellable? cancellable = null) {
+        GLib.SourceFunc callback = download_java_server_executable_async.callback;
 
         var dialog = new Foreman.Widgets.Dialogs.DownloadingDialog (Foreman.Application.get_instance ().get_main_window ());
         dialog.show_all ();
@@ -203,17 +220,17 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
 
         GLib.File? server_file = null;
         new GLib.Thread<void> ("download-server-executable", () => {
-            server_file = do_download_server_executable (version, dialog, cancellable);
+            server_file = do_download_java_server_executable (version, dialog, cancellable);
             if (server_file != null) {
                 Idle.add (() => {
                     dialog.show_extracting ();
                     return false;
                 });
 
-                if (!unpack_server_executable (server_file)) {
+                if (!unpack_java_server_executable (server_file)) {
                     // TODO: Error
-                    downloaded_executables.unset (version);
-                    sql_client.remove_server_executable (version);
+                    downloaded_java_executables.unset (version);
+                    sql_client.remove_java_server_executable (version);
                     return;
                 }
 
@@ -228,19 +245,19 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
         return server_file;
     }
 
-    private GLib.File? do_download_server_executable (string version, Foreman.Widgets.Dialogs.DownloadingDialog dialog, GLib.Cancellable? cancellable = null) {
+    private GLib.File? do_download_java_server_executable (string version, Foreman.Widgets.Dialogs.DownloadingDialog dialog, GLib.Cancellable? cancellable = null) {
         try {
-            var details_url = version_manifest.versions.get (version).url;
-            Foreman.Models.VersionDetails? version_details = download_version_details (details_url);
+            var details_url = java_version_manifest.versions.get (version).url;
+            Foreman.Models.JavaVersionDetails? version_details = download_java_version_details (details_url);
             if (version_details == null) {
                 return null;
             }
 
-            var server_details = version_details.downloads.get (Foreman.Models.VersionDetails.Download.Type.SERVER);
-            var server_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, server_executable_dir_path, version));
+            var server_details = version_details.downloads.get (Foreman.Models.JavaVersionDetails.Download.Type.SERVER);
+            var server_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, java_server_executable_dir_path, version));
             server_dir.make_directory (cancellable);
             var server_file = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, server_dir.get_path (), "server.jar"));
-            var context = new Foreman.Utils.HttpUtils.DownloadContext (server_details.url, server_file, server_details.size);
+            var context = new Foreman.Utils.HttpUtils.DownloadContext (server_details.url, server_file);
 
             context.progress.connect ((progress) => {
                 Idle.add (() => {
@@ -258,13 +275,13 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
             Foreman.Utils.HttpUtils.download_file (context, cancellable);
 
             // Add the executable to the database
-            var executable = new Foreman.Models.ServerExecutable () {
+            var executable = new Foreman.Models.JavaServerExecutable () {
                 version = version,
                 version_type = version_details.version_type,
                 directory = server_dir
             };
-            sql_client.insert_server_executable (executable);
-            downloaded_executables.set (version, executable);
+            sql_client.insert_java_server_executable (executable);
+            downloaded_java_executables.set (version, executable);
 
             return server_file;
         } catch (GLib.Error e) {
@@ -273,12 +290,12 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
         }
     }
 
-    private bool unpack_server_executable (GLib.File server_file) {
+    private bool unpack_java_server_executable (GLib.File server_file) {
         return Foreman.Core.Client.get_default ().java_execution_service.execute_sync ("java -jar %s nogui".printf (server_file.get_path ()), server_file.get_parent ().get_path ());
     }
 
-    public bool accept_eula (string version) {
-        var eula_file = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, server_executable_dir_path, version, EULA_FILENAME));
+    public bool accept_java_eula (string version) {
+        var eula_file = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, java_server_executable_dir_path, version, EULA_FILENAME));
         uint8[] old_contents;
         string etag;
         try {
@@ -297,14 +314,141 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
         return true;
     }
 
-    public void copy_template (string version, GLib.File target) {
-        var template_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, server_executable_dir_path, version));
+    public void copy_template (Foreman.Models.ServerType server_type, string version, GLib.File target) {
+        GLib.File template_dir;
+        switch (server_type) {
+            case JAVA_EDITION:
+                template_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, java_server_executable_dir_path, version));
+                break;
+            case BEDROCK:
+                template_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, bedrock_server_executable_dir_path, version));
+                break;
+            default:
+                assert_not_reached ();
+        }
         try {
             //  template_dir.copy (target, GLib.FileCopyFlags.OVERWRITE, null, null);
             Foreman.Utils.FileUtils.copy_recursive (template_dir, target, GLib.FileCopyFlags.OVERWRITE, null);
         } catch (GLib.Error e) {
             warning (e.message);
         }
+
+        if (server_type == Foreman.Models.ServerType.BEDROCK) {
+            var wrapper = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, Constants.PKG_DATA_DIR, "bedrock-wrapper.sh"));
+            var wrapper_target = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, target.get_path (), "bedrock-wrapper.sh"));
+            try {
+                wrapper.copy (wrapper_target, GLib.FileCopyFlags.OVERWRITE);
+            } catch (GLib.Error e) {
+                warning (e.message);
+            }
+        }
+    }
+
+    public string? get_latest_available_bedrock_version () {
+        string? html = null;
+        try {
+            html = Foreman.Utils.HttpUtils.get_as_string ("https://www.minecraft.net/download/server/bedrock");
+        } catch (GLib.Error e) {
+            warning (e.message);
+            return null;
+        }
+        try {
+            var doc = new GXml.XHtmlDocument.from_string_doc (html, Html.ParserOption.NOWARNING | Html.ParserOption.NOERROR);
+            GXml.DomElement? element = doc.query_selector (".downloadlink[data-platform=\"serverBedrockLinux\"]");
+            if (element == null) {
+                warning ("Download link element not found");
+                return null;
+            }
+            string? download_url = element.get_attribute ("href");
+            if (download_url == null) {
+                warning ("Download URL not found");
+                return null;
+            }
+            string[] url_tokens = download_url.split ("/");
+            string[] filename_tokens = url_tokens[url_tokens.length - 1].split ("-");
+            return filename_tokens[filename_tokens.length - 1].replace (".zip", "");
+        } catch (GLib.Error e) {
+            warning (e.message);
+            return null;
+        }
+    }
+
+    public async GLib.File? download_bedrock_server_executable_async (string version, GLib.Cancellable? cancellable = null) {
+        GLib.SourceFunc callback = download_bedrock_server_executable_async.callback;
+
+        var dialog = new Foreman.Widgets.Dialogs.DownloadingDialog (Foreman.Application.get_instance ().get_main_window ());
+        dialog.show_all ();
+        dialog.present ();
+        dialog.show_downloading ();
+
+        GLib.File? server_archive = null;
+        new GLib.Thread<void> ("download-server-executable", () => {
+            server_archive = do_download_bedrock_server_archive (version, dialog, cancellable);
+            if (server_archive != null) {
+                Idle.add (() => {
+                    dialog.show_extracting ();
+                    return false;
+                });
+
+                if (!unpack_bedrock_server_archive (server_archive)) {
+                    // TODO: Error
+                    downloaded_bedrock_executables.unset (version);
+                    sql_client.remove_bedrock_server_executable (version);
+                    return;
+                }
+                server_archive.delete_async ();
+
+                dialog.close ();
+            } else {
+                // TODO: Error
+            }
+            Idle.add ((owned) callback);
+        });
+        yield;
+
+        return server_archive;
+    }
+
+    private GLib.File? do_download_bedrock_server_archive (string version, Foreman.Widgets.Dialogs.DownloadingDialog dialog, GLib.Cancellable? cancellable = null) {
+        try {
+            var server_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, bedrock_server_executable_dir_path, version));
+            server_dir.make_directory (cancellable);
+            var server_archive = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, server_dir.get_path (), "bedrock-server.zip"));
+            var context = new Foreman.Utils.HttpUtils.DownloadContext (BEDROCK_DOWNLOAD_URL_FORMAT.printf (version), server_archive);
+
+            context.progress.connect ((progress) => {
+                Idle.add (() => {
+                    dialog.update_progress (context);
+                    return false;
+                });
+            });
+            //  context.complete.connect (() => {
+            //      Idle.add (() => {
+            //          dialog.close ();
+            //          return false;
+            //      });
+            //  });
+
+            Foreman.Utils.HttpUtils.download_file (context, cancellable);
+
+            // Add the executable to the database
+            var executable = new Foreman.Models.BedrockServerExecutable () {
+                version = version,
+                directory = server_dir
+            };
+            sql_client.insert_bedrock_server_executable (executable);
+            downloaded_bedrock_executables.set (version, executable);
+
+            return server_archive;
+        } catch (GLib.Error e) {
+            warning (e.message);
+            return null;
+        }
+    }
+
+    private bool unpack_bedrock_server_archive (GLib.File server_archive) {
+        Foreman.Utils.FileUtils.extract_archive (server_archive);
+        return true;
     }
 
 }

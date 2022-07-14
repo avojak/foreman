@@ -37,12 +37,18 @@ public class Foreman.Services.SQLClient : GLib.Object {
                 "uuid" TEXT NOT NULL,
                 "version" TEXT NOT NULL,
                 "path" TEXT NOT NULL,
-                "state" TEXT NOT NULL
+                "state" TEXT NOT NULL,
+                "type" TEXT NOT NULL
             );
-            CREATE TABLE IF NOT EXISTS "server_executables" (
+            CREATE TABLE IF NOT EXISTS "java_server_executables" (
                 "id" INTEGER PRIMARY KEY AUTOINCREMENT,
                 "version" TEXT NOT NULL,
                 "type" TEXT NOT NULL,
+                "path" TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS "bedrock_server_executables" (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "version" TEXT NOT NULL,
                 "path" TEXT NOT NULL
             );
             """;
@@ -90,8 +96,8 @@ public class Foreman.Services.SQLClient : GLib.Object {
 
     public void insert_server (Foreman.Services.Server.Context server_context) {
         var sql = """
-            INSERT INTO servers (uuid, name, version, path, state)
-            VALUES ($UUID, $NAME, $VERSION, $PATH, $STATE);
+            INSERT INTO servers (uuid, name, version, path, state, type)
+            VALUES ($UUID, $NAME, $VERSION, $PATH, $STATE, $TYPE);
         """;
 
         Sqlite.Statement statement;
@@ -105,6 +111,7 @@ public class Foreman.Services.SQLClient : GLib.Object {
         statement.bind_text (3, server_context.server_version);
         statement.bind_text (4, server_context.server_directory.get_path ());
         statement.bind_text (5, server_context.state.to_string ());
+        statement.bind_text (6, server_context.server_type.to_string ());
 
         string errmsg;
         int ec = database.exec (statement.expanded_sql (), null, out errmsg);
@@ -152,9 +159,9 @@ public class Foreman.Services.SQLClient : GLib.Object {
         statement.reset ();
     }
 
-    public void insert_server_executable (Foreman.Models.ServerExecutable executable) {
+    public void insert_java_server_executable (Foreman.Models.JavaServerExecutable executable) {
         var sql = """
-            INSERT INTO server_executables (version, type, path)
+            INSERT INTO java_server_executables (version, type, path)
             VALUES ($VERSION, $TYPE, $PATH);
         """;
 
@@ -177,10 +184,10 @@ public class Foreman.Services.SQLClient : GLib.Object {
         statement.reset ();
     }
 
-    public Gee.List<Foreman.Models.ServerExecutable> get_server_executables () {
-        var executables = new Gee.ArrayList<Foreman.Models.ServerExecutable> ();
+    public Gee.List<Foreman.Models.JavaServerExecutable> get_java_server_executables () {
+        var executables = new Gee.ArrayList<Foreman.Models.JavaServerExecutable> ();
 
-        var sql = "SELECT * FROM server_executables;";
+        var sql = "SELECT * FROM java_server_executables;";
         Sqlite.Statement statement;
         if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
             log_database_error (database.errcode (), database.errmsg ());
@@ -188,7 +195,7 @@ public class Foreman.Services.SQLClient : GLib.Object {
         }
 
         while (statement.step () == Sqlite.ROW) {
-            var executable = parse_server_executable_row (statement);
+            var executable = parse_java_server_executable_row (statement);
             executables.add (executable);
         }
         statement.reset ();
@@ -196,8 +203,69 @@ public class Foreman.Services.SQLClient : GLib.Object {
         return executables;
     }
 
-    public void remove_server_executable (string version) {
-        var sql = "DELETE FROM server_executables WHERE version = $VERSION;";
+    public void remove_java_server_executable (string version) {
+        var sql = "DELETE FROM java_server_executables WHERE version = $VERSION;";
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return;
+        }
+        statement.bind_text (1, version);
+
+        string err_msg;
+        int ec = database.exec (statement.expanded_sql (), null, out err_msg);
+        if (ec != Sqlite.OK) {
+            log_database_error (ec, err_msg);
+            debug ("SQL statement: %s", statement.expanded_sql ());
+        }
+        statement.reset ();
+    }
+
+    public void insert_bedrock_server_executable (Foreman.Models.BedrockServerExecutable executable) {
+        var sql = """
+            INSERT INTO bedrock_server_executables (version, path)
+            VALUES ($VERSION, $PATH);
+        """;
+
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return;
+        }
+
+        statement.bind_text (1, executable.version);
+        statement.bind_text (2, executable.directory.get_path ());
+
+        string errmsg;
+        int ec = database.exec (statement.expanded_sql (), null, out errmsg);
+        if (ec != Sqlite.OK) {
+            log_database_error (ec, errmsg);
+            debug ("SQL statement: %s", statement.expanded_sql ());
+        }
+        statement.reset ();
+    }
+
+    public Gee.List<Foreman.Models.BedrockServerExecutable> get_bedrock_server_executables () {
+        var executables = new Gee.ArrayList<Foreman.Models.BedrockServerExecutable> ();
+
+        var sql = "SELECT * FROM bedrock_server_executables;";
+        Sqlite.Statement statement;
+        if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
+            log_database_error (database.errcode (), database.errmsg ());
+            return executables;
+        }
+
+        while (statement.step () == Sqlite.ROW) {
+            var executable = parse_bedrock_server_executable_row (statement);
+            executables.add (executable);
+        }
+        statement.reset ();
+
+        return executables;
+    }
+
+    public void remove_bedrock_server_executable (string version) {
+        var sql = "DELETE FROM bedrock_server_executables WHERE version = $VERSION;";
         Sqlite.Statement statement;
         if (database.prepare_v2 (sql, sql.length, out statement) != Sqlite.OK) {
             log_database_error (database.errcode (), database.errmsg ());
@@ -240,6 +308,15 @@ public class Foreman.Services.SQLClient : GLib.Object {
                     }
                     context.state = (Foreman.Services.Server.State) eval.value;
                     break;
+                case "type":
+                    EnumClass enumc = (EnumClass) typeof (Foreman.Models.ServerType).class_ref ();
+                    unowned EnumValue? eval = enumc.get_value_by_name (statement.column_text (i));
+                    if (eval == null) {
+                        // TODO: Handle this 
+                        break;
+                    }
+                    context.server_type = (Foreman.Models.ServerType) eval.value;
+                    break;
                 default:
                     break;
             }
@@ -247,9 +324,9 @@ public class Foreman.Services.SQLClient : GLib.Object {
         return context;
     }
 
-    private Foreman.Models.ServerExecutable parse_server_executable_row (Sqlite.Statement statement) {
+    private Foreman.Models.JavaServerExecutable parse_java_server_executable_row (Sqlite.Statement statement) {
         var num_columns = statement.column_count ();
-        var executable = new Foreman.Models.ServerExecutable ();
+        var executable = new Foreman.Models.JavaServerExecutable ();
         for (int i = 0; i < num_columns; i++) {
             switch (statement.column_name (i)) {
                 case "version":
@@ -259,13 +336,31 @@ public class Foreman.Services.SQLClient : GLib.Object {
                     executable.directory = GLib.File.new_for_path (statement.column_text (i));
                     break;
                 case "type":
-                    EnumClass enumc = (EnumClass) typeof (Foreman.Models.VersionDetails.Type).class_ref ();
+                    EnumClass enumc = (EnumClass) typeof (Foreman.Models.JavaVersionDetails.Type).class_ref ();
                     unowned EnumValue? eval = enumc.get_value_by_name (statement.column_text (i));
                     if (eval == null) {
                         // TODO: Handle this 
                         break;
                     }
-                    executable.version_type = (Foreman.Models.VersionDetails.Type) eval.value;
+                    executable.version_type = (Foreman.Models.JavaVersionDetails.Type) eval.value;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return executable;
+    }
+
+    private Foreman.Models.BedrockServerExecutable parse_bedrock_server_executable_row (Sqlite.Statement statement) {
+        var num_columns = statement.column_count ();
+        var executable = new Foreman.Models.BedrockServerExecutable ();
+        for (int i = 0; i < num_columns; i++) {
+            switch (statement.column_name (i)) {
+                case "version":
+                    executable.version = statement.column_text (i);
+                    break;
+                case "path":
+                    executable.directory = GLib.File.new_for_path (statement.column_text (i));
                     break;
                 default:
                     break;

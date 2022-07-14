@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Foreman.Services.Server : GLib.Object {
+public abstract class Foreman.Services.Server<T> : GLib.Object {
 
     public enum State {
 
@@ -58,7 +58,10 @@ public class Foreman.Services.Server : GLib.Object {
             launcher.set_environ (GLib.Environ.get ());
         }
 
-        public GLib.Subprocess spawn (string cmd) throws GLib.Error {
+        public GLib.Subprocess spawn (string cmd, Gee.Map<string, string> env_vars = new Gee.HashMap<string, string> ()) throws GLib.Error {
+            foreach (var entry in env_vars.entries) {
+                launcher.setenv (entry.key, entry.value, true);
+            }
             return launcher.spawnv (cmd.split (" "));
         }
 
@@ -71,15 +74,17 @@ public class Foreman.Services.Server : GLib.Object {
         public string server_version { get; set; }
         public GLib.File server_directory { get; set; }
         public State state { get; set; }
+        public Foreman.Models.ServerType server_type { get; set; }
 
-        public Context.new_for_version (string name, string server_version) {
-            this.new_for_uuid (name, server_version, GLib.Uuid.string_random ());
+        public Context.new_for_version (string name, Foreman.Models.ServerType server_type, string server_version) {
+            this.new_for_uuid (name, server_type, server_version, GLib.Uuid.string_random ());
         }
 
-        public Context.new_for_uuid (string name, string server_version, string uuid) {
+        public Context.new_for_uuid (string name, Foreman.Models.ServerType server_type, string server_version, string uuid) {
             Object (
                 uuid: uuid,
                 name: name,
+                server_type: server_type,
                 server_version: server_version,
                 server_directory: GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, Foreman.Services.ServerManager.servers_dir_path, uuid)),
                 state: State.NOT_RUNNING
@@ -90,85 +95,61 @@ public class Foreman.Services.Server : GLib.Object {
 
     public Context context { get; construct; }
 
+    protected Gee.List<Foreman.Services.LogHandler<T>> log_handlers = new Gee.ArrayList<Foreman.Services.LogHandler<T>> ();
+
     private GLib.Cancellable cancellable = new GLib.Cancellable ();
     private GLib.Thread<void>? stdout_thread;
     private GLib.Thread<void>? stderr_thread;
     private GLib.Thread<void>? monitor_thread;
     private GLib.Subprocess? process;
-    private Gee.List<Foreman.Services.LogHandler> log_handlers;
 
-    public Server (string name, string server_version) {
-        this.new_for_context (new Context.new_for_version (name, server_version));
-    }
+    //  public Server (string name, Foreman.Models.ServerType type, string server_version) {
+    //      this.new_for_context (new Context.new_for_version (name, type, server_version));
+    //  }
 
-    public Server.new_for_context (Context context) {
-        Object (
-            context: context
-        );
-    }
+    //  public Server.new_for_context (Context context) {
+    //      Object (
+    //          context: context
+    //      );
+    //  }
 
-    construct {
-        var startup_log_handler = new Foreman.Services.StartupLogHandler ();
-        startup_log_handler.starting.connect (on_server_starting);
-        startup_log_handler.progress.connect (on_server_startup_progress);
-        startup_log_handler.complete.connect (on_server_started);
-        startup_log_handler.failed.connect (on_server_startup_failed);
-
-        var player_join_log_handler = new Foreman.Services.PlayerJoinLogHandler ();
-        player_join_log_handler.player_joined.connect (on_player_joined);
-
-        var player_left_log_handler = new Foreman.Services.PlayerLeftLogHandler ();
-        player_left_log_handler.player_left.connect (on_player_left);
-
-        var sink_log_handler = new Foreman.Services.SinkLogHandler ();
-        sink_log_handler.message_logged.connect (on_message_logged);
-        sink_log_handler.warning_logged.connect (on_warning_logged);
-        sink_log_handler.error_logged.connect (on_error_logged);
-
-        log_handlers = new Gee.ArrayList<Foreman.Services.LogHandler> ();
-        log_handlers.add (startup_log_handler);
-        log_handlers.add (player_join_log_handler);
-        log_handlers.add (player_left_log_handler);
-        log_handlers.add (sink_log_handler);
-    }
-
-    private void on_server_starting () {
+    protected void on_server_starting () {
         context.state = State.STARTING;
         startup_beginning ();
     }
 
-    private void on_server_startup_progress (double progress) {
+    protected void on_server_startup_progress (double progress) {
         startup_progress (progress);
     }
 
-    private void on_server_started () {
+    protected void on_server_started () {
         context.state = State.RUNNING;
         startup_complete ();
     }
 
-    private void on_server_startup_failed () {
+    protected void on_server_startup_failed () {
         context.state = State.ERRORED;
         // TODO: Look for session.lock file in the world/ directory and report that
         startup_failed ();
     }
 
-    private void on_player_joined (string username) {
+    protected void on_player_joined (string username) {
         player_joined (username);
     }
 
-    private void on_player_left (string username) {
+    protected void on_player_left (string username) {
         player_left (username);
     }
 
-    private void on_message_logged (string message) {
+    protected void on_message_logged (string message) {
         server_message_logged (message);
     }
 
-    private void on_warning_logged (string message) {
+    protected void on_warning_logged (string message) {
         server_warning_logged (message);
     }
 
-    private void on_error_logged (string message) {
+    protected void on_error_logged (string message) {
         server_error_logged (message);
     }
 
@@ -178,9 +159,8 @@ public class Foreman.Services.Server : GLib.Object {
             return;
         }
 
-        string cmd = "java -Xmx1024M -Xms1024M -jar server.jar nogui"; // TODO: Tune JVM settings
         try {
-            process = new ProcessLauncher (context.server_directory).spawn (cmd);
+            process = new ProcessLauncher (context.server_directory).spawn (get_startup_cmd (), get_environment_variables ());
         } catch (GLib.Error e) {
             warning (e.message);
             return;
@@ -240,7 +220,7 @@ public class Foreman.Services.Server : GLib.Object {
     private void handle_stdout (string line) {
         //  print ("stdout: %s\n", line.strip ());
         foreach (var handler in log_handlers) {
-            if (!handler.handle (new Models.LogMessage.from_output (line), Foreman.Services.LogHandler.Source.STDOUT)) {
+            if (!handler.handle (create_log_message (line), Foreman.Services.LogHandler.Source.STDOUT)) {
                 return;
             }
         }
@@ -249,7 +229,7 @@ public class Foreman.Services.Server : GLib.Object {
     private void handle_stderr (string line) {
         //  print ("stderr: %s\n", line.strip ());
         foreach (var handler in log_handlers) {
-            if (!handler.handle (new Models.LogMessage.from_output (line), Foreman.Services.LogHandler.Source.STDERR)) {
+            if (!handler.handle (create_log_message (line), Foreman.Services.LogHandler.Source.STDERR)) {
                 return;
             }
         }
@@ -283,6 +263,13 @@ public class Foreman.Services.Server : GLib.Object {
     public string? get_pid () {
         return process == null ? null : process.get_identifier ();
     }
+
+    public virtual Gee.Map<string, string> get_environment_variables () {
+        return new Gee.HashMap<string, string> ();
+    }
+
+    public abstract string get_startup_cmd ();
+    public abstract T create_log_message (string line);
 
     public signal void startup_beginning ();
     public signal void startup_progress (double progress);

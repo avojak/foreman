@@ -6,10 +6,14 @@
 public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
 
     private Granite.ValidatedEntry name_entry;
-    private Gtk.ListStore list_store;
-    private Gtk.ComboBox version_combo;
-    private Granite.Widgets.ModeButton gamemode_button;
+    private Gtk.ListStore java_list_store;
+    private Gtk.ListStore bedrock_list_store;
+    private Gtk.ComboBox java_edition_version_combo;
+    private Gtk.ComboBox bedrock_version_combo;
+    private Granite.Widgets.ModeButton server_type_button;
+    private Granite.Widgets.ModeButton game_mode_button;
     private Granite.Widgets.ModeButton difficulty_button;
+    private Gtk.Stack version_stack;
     private Gtk.Button create_button;
 
     public enum VersionColumn {
@@ -43,10 +47,16 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         create_button.get_style_context ().add_class ("suggested-action");
         create_button.clicked.connect (() => {
             Gtk.TreeIter iter;
-            version_combo.get_active_iter (out iter);
             GLib.Value value;
-            list_store.get_value (iter, VersionColumn.VERSION, out value);
-            create_button_clicked (name_entry.get_text (), value.get_string (), create_properties ());
+            var server_type = ((Foreman.Models.ServerType) server_type_button.selected);
+            if (server_type == Foreman.Models.ServerType.JAVA_EDITION) {
+                java_edition_version_combo.get_active_iter (out iter);
+                java_list_store.get_value (iter, VersionColumn.VERSION, out value);
+            } else {
+                bedrock_version_combo.get_active_iter (out iter);
+                bedrock_list_store.get_value (iter, VersionColumn.VERSION, out value);
+            }
+            create_button_clicked (name_entry.get_text (), server_type, value.get_string (), create_properties ());
         });
 
         add_action_widget (cancel_button, 0);
@@ -95,22 +105,38 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
             name_entry.is_valid = name_entry.text_length > 0;
         });
 
+        var server_type_label = new Gtk.Label (_("Server type:")) {
+            halign = Gtk.Align.END
+        };
+        server_type_button = new Granite.Widgets.ModeButton () {
+            //  margin = 12
+        };
+        server_type_button.append_text (Foreman.Models.ServerType.JAVA_EDITION.get_display_string ());
+        server_type_button.append_text (Foreman.Models.ServerType.BEDROCK.get_display_string ());
+        // TODO: Pull from preferences
+        //  server_type_button.selected = 1; // Foreman.Application.settings.get_int ("gamemode");
+
         var version_label = new Gtk.Label (_("Version:")) {
             halign = Gtk.Align.END
         };
-        version_combo = create_version_combo ();
+        java_edition_version_combo = create_java_edition_version_combo ();
+        bedrock_version_combo = create_bedrock_version_combo ();
+
+        version_stack = new Gtk.Stack ();
+        version_stack.add_named (java_edition_version_combo, Foreman.Models.ServerType.JAVA_EDITION.to_string ());
+        version_stack.add_named (bedrock_version_combo, Foreman.Models.ServerType.BEDROCK.to_string ());
 
         var game_mode_label = new Gtk.Label (_("Game mode:")) {
             halign = Gtk.Align.END
         };
-        gamemode_button = new Granite.Widgets.ModeButton () {
+        game_mode_button = new Granite.Widgets.ModeButton () {
             //  margin = 12
         };
-        gamemode_button.append_text (Foreman.Models.GameMode.SURVIVAL.get_display_string ());
-        gamemode_button.append_text (Foreman.Models.GameMode.CREATIVE.get_display_string ());
-        gamemode_button.append_text (Foreman.Models.GameMode.ADVENTURE.get_display_string ());
-        gamemode_button.append_text (Foreman.Models.GameMode.SPECTATOR.get_display_string ());
-        gamemode_button.selected = Foreman.Application.settings.get_int ("gamemode");
+        game_mode_button.append_text (Foreman.Models.GameMode.SURVIVAL.get_display_string ());
+        game_mode_button.append_text (Foreman.Models.GameMode.CREATIVE.get_display_string ());
+        game_mode_button.append_text (Foreman.Models.GameMode.ADVENTURE.get_display_string ());
+        game_mode_button.append_text (Foreman.Models.GameMode.SPECTATOR.get_display_string ());
+        game_mode_button.selected = Foreman.Application.settings.get_int ("gamemode");
 
         var difficulty_label = new Gtk.Label (_("Difficulty:")) {
             halign = Gtk.Align.END
@@ -136,40 +162,65 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
 
         form_grid.attach (name_label, 0, 0);
         form_grid.attach (name_entry, 1, 0);
-        form_grid.attach (version_label, 0, 1);
-        form_grid.attach (version_combo, 1, 1);
-        form_grid.attach (game_mode_label, 0, 2);
-        form_grid.attach (gamemode_button, 1, 2);
-        form_grid.attach (difficulty_label, 0, 3);
-        form_grid.attach (difficulty_button, 1, 3);
-        form_grid.attach (customize_button, 0, 4, 2);
+        form_grid.attach (server_type_label, 0, 1);
+        form_grid.attach (server_type_button, 1, 1);
+        form_grid.attach (version_label, 0, 2);
+        form_grid.attach (version_stack, 1, 2);
+        form_grid.attach (game_mode_label, 0, 3);
+        form_grid.attach (game_mode_button, 1, 3);
+        form_grid.attach (difficulty_label, 0, 4);
+        form_grid.attach (difficulty_button, 1, 4);
+        form_grid.attach (customize_button, 0, 5, 2);
 
         // Connect to signals to determine whether the connect button should be sensitive
         // Note: Can't use the preferred Granite.ValidatedEntry way, because that seems to limit
         //       one widget per button, not a set of widgets like in this case.
         name_entry.changed.connect (update_create_button);
+        server_type_button.mode_changed.connect (() => {
+            version_stack.set_visible_child_name (((Foreman.Models.ServerType) server_type_button.selected).to_string ());
+        });
+
+        // TODO: Pull from preferences
+        server_type_button.selected = Foreman.Models.ServerType.BEDROCK;
+        Idle.add (() => {
+            version_stack.set_visible_child_name (Foreman.Models.ServerType.BEDROCK.to_string ());
+            return false;
+        });
 
         return form_grid;
     }
 
-    private Gtk.ComboBox create_version_combo () {
-        var latest_release_version = Foreman.Core.Client.get_default ().server_executable_repository.get_latest_release_version ();
+    private Gtk.ComboBox create_java_edition_version_combo () {
+        var latest_release_version = Foreman.Core.Client.get_default ().server_executable_repository.get_latest_java_release_version ();
         //  var latest_snapshot_version = Foreman.Core.Client.get_default ().server_executable_repository.get_latest_snapshot_version ();
-        var available_versions = Foreman.Core.Client.get_default ().server_executable_repository.get_downloaded_executables ();
+        var available_versions = Foreman.Core.Client.get_default ().server_executable_repository.get_downloaded_java_executables ();
 
-        list_store = new Gtk.ListStore (4, typeof (string), typeof (string), typeof (string), typeof (int));
+        java_list_store = new Gtk.ListStore (4, typeof (string), typeof (string), typeof (string), typeof (int));
 
+        return create_version_combo (latest_release_version, available_versions, java_list_store);
+    }
+
+    private Gtk.ComboBox create_bedrock_version_combo () {
+        var latest_release_version = Foreman.Core.Client.get_default ().server_executable_repository.get_latest_bedrock_version ();
+        var available_versions = Foreman.Core.Client.get_default ().server_executable_repository.get_downloaded_bedrock_executables ();
+
+        bedrock_list_store = new Gtk.ListStore (4, typeof (string), typeof (string), typeof (string), typeof (int));
+
+        return create_version_combo (latest_release_version, available_versions, bedrock_list_store);
+    }
+
+    private Gtk.ComboBox create_version_combo (string? latest, Gee.HashMap<string, Foreman.Models.ServerExecutable> available, Gtk.ListStore list_store) {
         // Add the entry for the latest release version available if we don't already have it downloaded
-        if (latest_release_version != null && !available_versions.has_key (latest_release_version)) {
+        if (latest != null && !available.has_key (latest)) {
             Gtk.TreeIter iter;
             list_store.append (out iter);
             list_store.set (iter, VersionColumn.ICON, "software-update-available");
-            list_store.set (iter, VersionColumn.VERSION, latest_release_version);
+            list_store.set (iter, VersionColumn.VERSION, latest);
             list_store.set (iter, VersionColumn.DESCRIPTION, _("(Will be downloaded)"));
         }
 
         //  // Add the entry for the latest snapshot version available if we don't already have it downloaded
-        //  if (latest_release_version != null && !available_versions.has_key (latest_release_version)) {
+        //  if (latest_release_version != null && !available.has_key (latest_release_version)) {
         //      Gtk.TreeIter iter;
         //      list_store.append (out iter);
         //      list_store.set (iter, VersionColumn.ICON, "software-update-available");
@@ -178,7 +229,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         //  }
 
         // Add all previously downloaded versions
-        foreach (var entry in available_versions.entries) {
+        foreach (var entry in available.entries) {
             Gtk.TreeIter iter;
             list_store.append (out iter);
             list_store.set (iter, VersionColumn.ICON, "process-completed-symbolic");
@@ -210,12 +261,13 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
     }
 
     private Foreman.Models.ServerProperties create_properties () {
-        var properties = new Foreman.Models.ServerProperties.from_defaults ();
-        properties.difficulty.set_from_string (((Foreman.Models.Difficulty) difficulty_button.selected).get_short_name ());
-        properties.gamemode.set_from_string (((Foreman.Models.GameMode) gamemode_button.selected).get_short_name ());
+        var properties = new Foreman.Models.ServerProperties () {
+            difficulty = (Foreman.Models.Difficulty) difficulty_button.selected,
+            gamemode = (Foreman.Models.GameMode) game_mode_button.selected,
+        };
         return properties;
     }
 
-    public signal void create_button_clicked (string name, string version, Foreman.Models.ServerProperties properties);
+    public signal void create_button_clicked (string name, Foreman.Models.ServerType server_type, string version, Foreman.Models.ServerProperties properties);
 
 }

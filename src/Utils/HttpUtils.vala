@@ -9,14 +9,14 @@ public class Foreman.Utils.HttpUtils {
 
         public string url { get; construct; }
         public GLib.File file { get; construct; }
-        public int64 total_size { get; construct; }
+        public int64 total_size { get; set; }
         public int64 total_read { get; set; }
 
-        public DownloadContext (string url, GLib.File file, int64 total_size) {
+        public DownloadContext (string url, GLib.File file) {
             Object (
                 url: url,
                 file: file,
-                total_size: total_size,
+                total_size: 0,
                 total_read: 0
             );
         }
@@ -35,7 +35,9 @@ public class Foreman.Utils.HttpUtils {
      */
     public static void download_file (DownloadContext context, GLib.Cancellable? cancellable = null) throws GLib.Error {
         var session = new Soup.Session ();
-        var input_stream = new DataInputStream (session.send (new Soup.Message.from_uri ("GET", new Soup.URI (context.url)), cancellable));
+        var message = new Soup.Message.from_uri ("GET", new Soup.URI (context.url));
+        var input_stream = new DataInputStream (session.send (message, cancellable));
+        context.total_size = message.response_headers.get_content_length ();
         var output_stream = context.file.replace (null, false, GLib.FileCreateFlags.NONE, cancellable);
         GLib.Bytes bytes;
         while ((bytes = input_stream.read_bytes (256, cancellable)).length != 0) {
@@ -52,6 +54,19 @@ public class Foreman.Utils.HttpUtils {
         //      context.progress ();
         //  }
         context.complete ();
+    }
+
+    public static string get_as_string (string url, GLib.Cancellable? cancellable = null) throws GLib.Error {
+        var session = new Soup.Session () {
+            use_thread_context = true
+        };
+        var input_stream = new DataInputStream (session.request (url).send ());
+        var sb = new GLib.StringBuilder ();
+        string? line;
+        while ((line = input_stream.read_line ()) != null) {
+            sb.append (line);
+        }
+        return sb.str;
     }
 
 }

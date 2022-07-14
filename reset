@@ -45,12 +45,14 @@ echo "Resetting database..."
 DATABASE_PATH=~/.var/app/$APP_ID/config/foreman.db
 
 clear_sqlite_table servers
-clear_sqlite_table server_executables
+clear_sqlite_table java_server_executables
+clear_sqlite_table bedrock_server_executables
 
 echo
 echo "Deleting files…"
 
-delete_files /var/config/server_executables/
+delete_files /var/config/java_server_executables/
+delete_files /var/config/bedrock_server_executables/
 delete_files /var/config/servers/
 
 echo

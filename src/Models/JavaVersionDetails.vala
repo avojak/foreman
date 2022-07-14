@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Foreman.Models.VersionDetails : GLib.Object {
+public class Foreman.Models.JavaVersionDetails : GLib.Object {
 
     public class Download : GLib.Object {
 
@@ -89,8 +89,8 @@ public class Foreman.Models.VersionDetails : GLib.Object {
     public Type version_type { get; set; }
     public Gee.Map<Download.Type, Download> downloads { get; set; }
 
-    public static VersionDetails from_json (Json.Object json) {
-        var obj = new VersionDetails ();
+    public static JavaVersionDetails from_json (Json.Object json) {
+        var obj = new JavaVersionDetails ();
         foreach (unowned string name in json.get_members ()) {
             switch (name) {
                 case "id":

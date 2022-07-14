@@ -228,7 +228,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
 
     private bool delete_confirmation (Foreman.Services.Server.Context server_context) {
         var message_dialog = new Granite.MessageDialog.with_image_from_icon_name (
-            _("Delete “%s”?").printf ("My Server"), // TODO: Get actual server name from context
+            _("Delete “%s”?").printf (server_context.name),
             _("The server and all world data will be permanently deleted."),
             "edit-delete",
             Gtk.ButtonsType.CANCEL
@@ -255,8 +255,8 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
         // ----
 
         //  var latest_release = Foreman.Core.Client.get_default ().server_executable_repository.get_latest_release_version ();
-        //  Foreman.Core.Client.get_default ().server_executable_repository.download_server_executable_async.begin (latest_release, null, (obj, res) => {
-        //      GLib.File? server_file = Foreman.Core.Client.get_default ().server_executable_repository.download_server_executable_async.end (res);
+        //  Foreman.Core.Client.get_default ().server_executable_repository.download_java_server_executable_async.begin (latest_release, null, (obj, res) => {
+        //      GLib.File? server_file = Foreman.Core.Client.get_default ().server_executable_repository.download_java_server_executable_async.end (res);
         //      if (server_file == null) {
         //          debug ("Error downloading server file");
         //      }
@@ -266,7 +266,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
         //          // TODO
         //          return;
         //      }
-        //      if (!Foreman.Core.Client.get_default ().server_executable_repository.accept_eula (latest_release)) {
+        //      if (!Foreman.Core.Client.get_default ().server_executable_repository.accept_java_eula (latest_release)) {
         //          // TODO: This is an error
         //          return;
         //      }
@@ -280,9 +280,12 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
 
         if (create_new_server_dialog == null) {
             create_new_server_dialog = new Foreman.Widgets.Dialogs.CreateNewServerDialog (this);
-            create_new_server_dialog.create_button_clicked.connect ((name, version, properties) => {
-                create_new_server_dialog.close ();
-                create_new_server (name, version, properties);
+            create_new_server_dialog.create_button_clicked.connect ((name, server_type, version, properties) => {
+                //  Idle.add (() => {
+                    create_new_server_dialog.close ();
+                    //  return false;
+                //  });
+                create_new_server (name, server_type, version, properties);
             });
             create_new_server_dialog.destroy.connect (() => {
                 create_new_server_dialog = null;
@@ -292,34 +295,63 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
         create_new_server_dialog.present ();
     }
 
-    private void create_new_server (string name, string version, Foreman.Models.ServerProperties properties) {
-        if (!Foreman.Core.Client.get_default ().server_executable_repository.get_downloaded_executables ().has_key (version)) {
-            Foreman.Core.Client.get_default ().server_executable_repository.download_server_executable_async.begin (version, null, (obj, res) => {
-                GLib.File? server_file = Foreman.Core.Client.get_default ().server_executable_repository.download_server_executable_async.end (res);
-                if (server_file == null) {
-                    debug ("Error downloading server file");
+    private void create_new_server (string name, Foreman.Models.ServerType server_type, string version, Foreman.Models.ServerProperties properties) {
+        switch (server_type) {
+            case JAVA_EDITION:
+                if (!Foreman.Core.Client.get_default ().server_executable_repository.get_downloaded_java_executables ().has_key (version)) {
+                    Foreman.Core.Client.get_default ().server_executable_repository.download_java_server_executable_async.begin (version, null, (obj, res) => {
+                        GLib.File? server_file = Foreman.Core.Client.get_default ().server_executable_repository.download_java_server_executable_async.end (res);
+                        if (server_file == null) {
+                            debug ("Error downloading server file");
+                        }
+        
+                        // Show EULA dialog since this is a new download (Maybe change this to a one-time thing? Should follow how it would be done if running manually)
+                        if (show_eula_dialog ("https://account.mojang.com/documents/minecraft_eula") != Gtk.ResponseType.ACCEPT) {
+                            // TODO
+                            return;
+                        }
+                        if (!Foreman.Core.Client.get_default ().server_executable_repository.accept_java_eula (version)) {
+                            // TODO: This is an error
+                            return;
+                        }
+        
+                        Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
+                    });
+                } else {
+                    Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
                 }
-
-                // Show EULA dialog since this is a new download (Maybe change this to a one-time thing? Should follow how it would be done if running manually)
-                if (show_eula_dialog () != Gtk.ResponseType.ACCEPT) {
-                    // TODO
-                    return;
+                break;
+            case BEDROCK:
+                if (!Foreman.Core.Client.get_default ().server_executable_repository.get_downloaded_bedrock_executables ().has_key (version)) {
+                    Foreman.Core.Client.get_default ().server_executable_repository.download_bedrock_server_executable_async.begin (version, null, (obj, res) => {
+                        GLib.File? server_file = Foreman.Core.Client.get_default ().server_executable_repository.download_bedrock_server_executable_async.end (res);
+                        if (server_file == null) {
+                            debug ("Error downloading server file");
+                        }
+        
+                        // Show EULA dialog since this is a new download (Maybe change this to a one-time thing? Should follow how it would be done if running manually)
+                        if (show_eula_dialog ("https://www.minecraft.net/en-us/terms") != Gtk.ResponseType.ACCEPT) {
+                            // TODO
+                            return;
+                        }
+                        //  if (!Foreman.Core.Client.get_default ().server_executable_repository.accept_java_eula (version)) {
+                        //      // TODO: This is an error
+                        //      return;
+                        //  }
+        
+                        Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
+                    });
+                } else {
+                    Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
                 }
-                if (!Foreman.Core.Client.get_default ().server_executable_repository.accept_eula (version)) {
-                    // TODO: This is an error
-                    return;
-                }
-
-                Foreman.Core.Client.get_default ().server_manager.create_server (name, version, properties).start ();
-            });
-        } else {
-            Foreman.Core.Client.get_default ().server_manager.create_server (name, version, properties).start ();
+                break;
+            default:
+                assert_not_reached ();
         }
-
     }
 
-    private int show_eula_dialog () {
-        var eula_dialog = new Foreman.Widgets.Dialogs.MojangEULADialog (this);
+    private int show_eula_dialog (string url) {
+        var eula_dialog = new Foreman.Widgets.Dialogs.MojangEULADialog (this, url);
         int response = eula_dialog.run ();
         eula_dialog.destroy ();
         if (response == Gtk.ResponseType.ACCEPT) {

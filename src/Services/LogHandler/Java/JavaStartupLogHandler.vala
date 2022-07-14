@@ -3,7 +3,7 @@
  * SPDX-FileCopyrightText: 2022 Andrew Vojak <andrew.vojak@gmail.com>
  */
 
-public class Foreman.Services.StartupLogHandler : Foreman.Services.LogHandler {
+public class Foreman.Services.JavaStartupLogHandler : Foreman.Services.LogHandler<Foreman.Models.JavaLogMessage> {
 
     private const string STARTING_REGEX_STR = """^Starting net.minecraft.server.Main$""";
     private const string PROGRESS_REGEX_STR = """^Preparing spawn area: (?P<progress_str>\d{1,2})%$""";
@@ -30,7 +30,7 @@ public class Foreman.Services.StartupLogHandler : Foreman.Services.LogHandler {
         }
     }
 
-    protected override bool do_handle (Foreman.Models.LogMessage message, Foreman.Services.LogHandler.Source source) {
+    protected override bool do_handle (Foreman.Models.JavaLogMessage message, Foreman.Services.LogHandler.Source source) {
         if (starting_regex.match (message.raw)) {
             starting ();
         } else if (progress_regex.match (message.message)) {
@@ -52,7 +52,7 @@ public class Foreman.Services.StartupLogHandler : Foreman.Services.LogHandler {
         return true;
     }
 
-    protected override bool can_handle (Foreman.Models.LogMessage message, Foreman.Services.LogHandler.Source source) {
+    protected override bool can_handle (Foreman.Models.JavaLogMessage message, Foreman.Services.LogHandler.Source source) {
         return starting_regex.match (message.raw)
                 || (message.message != null
                     && (progress_regex.match (message.message)
