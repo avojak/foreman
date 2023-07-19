@@ -37,13 +37,13 @@ public class Foreman.Views.Settings.NetworkSettingsPage : Granite.SimpleSettings
             halign = Gtk.Align.END
         };
         var ip_entry = new Gtk.Entry ();
-        Foreman.Application.settings.bind ("server-ip", ip_entry, "text", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("server-ip", ip_entry, "text", GLib.SettingsBindFlags.DEFAULT);
 
         var port_label = new Gtk.Label (_("Port:")) {
             halign = Gtk.Align.END
         };
         var port_entry = new Gtk.SpinButton.with_range (1, 65535, 1);
-        Foreman.Application.settings.bind ("server-port", port_entry, "value", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("server-port", port_entry, "value", GLib.SettingsBindFlags.DEFAULT);
 
         var enable_status_label = new Gtk.Label (_("Enable status:")) {
             halign = Gtk.Align.END
@@ -52,7 +52,7 @@ public class Foreman.Views.Settings.NetworkSettingsPage : Granite.SimpleSettings
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("enable-status", enable_status_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("enable-status", enable_status_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         /**
          * RCON (GameSpy4) section
@@ -66,13 +66,13 @@ public class Foreman.Views.Settings.NetworkSettingsPage : Granite.SimpleSettings
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("enable-query", enable_query_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("enable-query", enable_query_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         query_port_label = new Gtk.Label (_("Port:")) {
             halign = Gtk.Align.END
         };
         query_port_entry = new Gtk.SpinButton.with_range (1, 65535, 1);
-        Foreman.Application.settings.bind ("query-port", query_port_entry, "value", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("query-port", query_port_entry, "value", GLib.SettingsBindFlags.DEFAULT);
 
         var enable_rcon_label = new Gtk.Label (_("Enable:")) {
             halign = Gtk.Align.END
@@ -81,13 +81,13 @@ public class Foreman.Views.Settings.NetworkSettingsPage : Granite.SimpleSettings
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("enable-rcon", enable_rcon_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("enable-rcon", enable_rcon_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         rcon_port_label = new Gtk.Label (_("Port:")) {
             halign = Gtk.Align.END
         };
         rcon_port_entry = new Gtk.SpinButton.with_range (1, 65535, 1);
-        Foreman.Application.settings.bind ("rcon-port", rcon_port_entry, "value", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("rcon-port", rcon_port_entry, "value", GLib.SettingsBindFlags.DEFAULT);
 
         rcon_password_label = new Gtk.Label (_("Password:")) {
             halign = Gtk.Align.END
@@ -108,7 +108,7 @@ public class Foreman.Views.Settings.NetworkSettingsPage : Granite.SimpleSettings
                 rcon_password_entry.set_icon_from_icon_name (Gtk.EntryIconPosition.SECONDARY, "changes-prevent-symbolic");
             }
         });
-        Foreman.Application.settings.bind ("rcon-password", rcon_password_entry, "text", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("rcon-password", rcon_password_entry, "text", GLib.SettingsBindFlags.DEFAULT);
 
         /**
          * Network Compression section

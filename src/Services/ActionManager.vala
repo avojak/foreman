@@ -13,7 +13,7 @@
     //  public const string ACTION_AVAILABLE_DOWNLOADS = "action_available_downloads";
     public const string ACTION_CONFIGURE_SELECTED_SERVER = "action_configure_selected_server";
     public const string ACTION_DELETE_SELECTED_SERVER = "action_delete_selected_server";
-    public const string ACTION_HELP = "action_help";
+    //  public const string ACTION_HELP = "action_help";
 
     private const GLib.ActionEntry[] ACTION_ENTRIES = {
         { ACTION_QUIT, action_quit },
@@ -23,7 +23,7 @@
         //  { ACTION_AVAILABLE_DOWNLOADS, action_available_downloads },
         { ACTION_CONFIGURE_SELECTED_SERVER, action_configure_selected_server },
         { ACTION_DELETE_SELECTED_SERVER, action_delete_selected_server },
-        { ACTION_HELP, action_help }
+        //  { ACTION_HELP, action_help }
     };
 
     private static Gee.MultiMap<string, string> accelerators;
@@ -45,7 +45,7 @@
         accelerators.set (ACTION_QUIT, "<Control>q");
         accelerators.set (ACTION_PREFERENCES, "<Control><Shift>p");
         accelerators.set (ACTION_TOGGLE_SIDEBAR, "<Control>backslash");
-        accelerators.set (ACTION_HELP, "<Control>h");
+        //  accelerators.set (ACTION_HELP, "<Control>h");
     }
 
     construct {
@@ -69,7 +69,7 @@
     }
 
     private void action_preferences () {
-        window.show_preferences_dialog ();
+        //  window.show_preferences_dialog ();
     }
 
     private void action_toggle_sidebar () {
@@ -92,8 +92,8 @@
         window.delete_selected_server ();
     }
 
-    private void action_help () {
-        window.show_help_dialog ();
-    }
+    //  private void action_help () {
+    //      window.show_help_dialog ();
+    //  }
 
 }

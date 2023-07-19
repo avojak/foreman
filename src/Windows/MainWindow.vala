@@ -14,6 +14,7 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
     private Foreman.Widgets.Dialogs.CreateNewServerDialog? create_new_server_dialog;
     private Foreman.Widgets.Dialogs.ConfigureServerDialog? configure_server_dialog;
     private Foreman.Widgets.Dialogs.AvailableServerDownloadsDialog? available_server_downloads_dialog;
+    private Foreman.Widgets.Dialogs.ServerAddressDialog? server_address_dialog;
     private Foreman.Widgets.Dialogs.HelpDialog? help_dialog;
 
     private Foreman.Layouts.MainLayout layout;
@@ -315,10 +316,10 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
                             return;
                         }
 
-                        Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
+                        Foreman.Core.Client.get_default ().server_manager.create_java_server (name, version, properties).start ();
                     });
                 } else {
-                    Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
+                    Foreman.Core.Client.get_default ().server_manager.create_java_server (name, version, properties).start ();
                 }
                 break;
             case BEDROCK:
@@ -339,10 +340,10 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
                         //      return;
                         //  }
 
-                        Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
+                        Foreman.Core.Client.get_default ().server_manager.create_bedrock_server (name, version, properties).start ();
                     });
                 } else {
-                    Foreman.Core.Client.get_default ().server_manager.create_server (name, server_type, version, properties).start ();
+                    Foreman.Core.Client.get_default ().server_manager.create_bedrock_server (name, version, properties).start ();
                 }
                 break;
             default:
@@ -373,6 +374,17 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
         help_dialog.present ();
     }
 
+    public void show_server_address_dialog (uint port) {
+        if (server_address_dialog == null) {
+            server_address_dialog = new Foreman.Widgets.Dialogs.ServerAddressDialog (this, port);
+            server_address_dialog.destroy.connect (() => {
+                server_address_dialog = null;
+            });
+            server_address_dialog.show_all ();
+        }
+        server_address_dialog.present ();
+    }
+
     //  public void show_available_server_downloads_dialog () {
     //      //  if (available_server_downloads_dialog == null) {
     //      //      available_server_downloads_dialog = new Foreman.Widgets.Dialogs.AvailableServerDownloadsDialog (this);
@@ -387,15 +399,15 @@ public class Foreman.Windows.MainWindow : Hdy.Window {
     //      dialog.present ();
 
     //      unowned var client = Foreman.Core.Client.get_default ();
-    //      client.server_download_service.retrieve_available_servers.begin ((obj, res) => {
-    //          Foreman.Models.VersionManifest? version_manifest = client.server_download_service.retrieve_available_servers.end (res);
+    //      client.server_executable_repository.retrieve_available_servers.begin ((obj, res) => {
+    //          Foreman.Models.VersionManifest? version_manifest = client.server_executable_repository.retrieve_available_servers.end (res);
     //          if (version_manifest == null) {
     //              // TODO: Error
     //              return;
     //          }
     //          var server_manifest = version_manifest.versions.get (version_manifest.latest.release);
-    //          client.server_download_service.retrieve_version_details.begin (server_manifest.url, (obj, res) => {
-    //              Foreman.Models.VersionDetails? version_details = client.server_download_service.retrieve_version_details.end (res);
+    //          client.server_executable_repository.retrieve_version_details.begin (server_manifest.url, (obj, res) => {
+    //              Foreman.Models.VersionDetails? version_details = client.server_executable_repository.retrieve_version_details.end (res);
     //              if (version_details == null) {
     //                  // TODO: Error
     //                  return;

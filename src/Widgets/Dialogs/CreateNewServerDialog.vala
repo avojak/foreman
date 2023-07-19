@@ -114,7 +114,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         server_type_button.append_text (Foreman.Models.ServerType.JAVA_EDITION.get_display_string ());
         server_type_button.append_text (Foreman.Models.ServerType.BEDROCK.get_display_string ());
         // TODO: Pull from preferences
-        //  server_type_button.selected = 1; // Foreman.Application.settings.get_int ("gamemode");
+        //  server_type_button.selected = 1; // Foreman.Application.java_server_preferences.get_int ("gamemode");
 
         var version_label = new Gtk.Label (_("Version:")) {
             halign = Gtk.Align.END
@@ -136,7 +136,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         game_mode_button.append_text (Foreman.Models.GameMode.CREATIVE.get_display_string ());
         game_mode_button.append_text (Foreman.Models.GameMode.ADVENTURE.get_display_string ());
         game_mode_button.append_text (Foreman.Models.GameMode.SPECTATOR.get_display_string ());
-        game_mode_button.selected = Foreman.Application.settings.get_int ("gamemode");
+        game_mode_button.selected = Foreman.Application.java_server_preferences.get_int ("gamemode");
 
         var difficulty_label = new Gtk.Label (_("Difficulty:")) {
             halign = Gtk.Align.END
@@ -148,7 +148,7 @@ public class Foreman.Widgets.Dialogs.CreateNewServerDialog : Granite.Dialog {
         difficulty_button.append_text (Foreman.Models.Difficulty.EASY.get_display_string ());
         difficulty_button.append_text (Foreman.Models.Difficulty.NORMAL.get_display_string ());
         difficulty_button.append_text (Foreman.Models.Difficulty.HARD.get_display_string ());
-        difficulty_button.selected = Foreman.Application.settings.get_int ("difficulty");
+        difficulty_button.selected = Foreman.Application.java_server_preferences.get_int ("difficulty");
 
         var customize_button = new Gtk.Button () {
             halign = Gtk.Align.CENTER,

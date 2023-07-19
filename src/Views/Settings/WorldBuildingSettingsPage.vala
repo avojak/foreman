@@ -29,19 +29,19 @@ public class Foreman.Views.Settings.WorldBuildingSettingsPage : Granite.SimpleSe
         level_type_button.append_text (Foreman.Models.WorldPreset.LARGE_BIOMES.get_display_string ());
         level_type_button.append_text (Foreman.Models.WorldPreset.AMPLIFIED.get_display_string ());
         level_type_button.append_text (Foreman.Models.WorldPreset.SINGLE_BIOME_SURFACE.get_display_string ());
-        Foreman.Application.settings.bind ("level-type", level_type_button, "selected", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("level-type", level_type_button, "selected", GLib.SettingsBindFlags.DEFAULT);
 
         var seed_label = new Gtk.Label (_("Seed:")) {
             halign = Gtk.Align.END
         };
         var seed_entry = new Gtk.Entry ();
-        Foreman.Application.settings.bind ("level-seed", seed_entry, "text", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("level-seed", seed_entry, "text", GLib.SettingsBindFlags.DEFAULT);
 
         var max_world_size_label = new Gtk.Label (_("Max world size:")) {
             halign = Gtk.Align.END
         };
         var max_world_size_entry = new Gtk.SpinButton.with_range (1, 29999984, 1);
-        Foreman.Application.settings.bind ("max-world-size", max_world_size_entry, "value", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("max-world-size", max_world_size_entry, "value", GLib.SettingsBindFlags.DEFAULT);
 
         var generate_structures_label = new Gtk.Label (_("Generate structures:")) {
             halign = Gtk.Align.END
@@ -50,7 +50,7 @@ public class Foreman.Views.Settings.WorldBuildingSettingsPage : Granite.SimpleSe
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("generate-structures", generate_structures_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("generate-structures", generate_structures_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         var allow_nether_label = new Gtk.Label (_("Allow Nether:")) {
             halign = Gtk.Align.END
@@ -59,7 +59,7 @@ public class Foreman.Views.Settings.WorldBuildingSettingsPage : Granite.SimpleSe
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("allow-nether", allow_nether_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("allow-nether", allow_nether_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         // TODO: Generator settings
 
@@ -72,7 +72,7 @@ public class Foreman.Views.Settings.WorldBuildingSettingsPage : Granite.SimpleSe
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("spawn-npcs", spawn_npcs_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("spawn-npcs", spawn_npcs_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         var spawn_animals_label = new Gtk.Label (_("Spawn animals:")) {
             halign = Gtk.Align.END
@@ -81,7 +81,7 @@ public class Foreman.Views.Settings.WorldBuildingSettingsPage : Granite.SimpleSe
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("spawn-animals", spawn_animals_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("spawn-animals", spawn_animals_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         var spawn_monsters_label = new Gtk.Label (_("Spawn monsters:")) {
             halign = Gtk.Align.END
@@ -90,13 +90,13 @@ public class Foreman.Views.Settings.WorldBuildingSettingsPage : Granite.SimpleSe
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("spawn-monsters", spawn_monsters_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("spawn-monsters", spawn_monsters_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         var spawn_protection_label = new Gtk.Label (_("Spawn protection:")) {
             halign = Gtk.Align.END
         };
         var spawn_protection_entry = new Gtk.SpinButton.with_range (0, double.MAX, 1);
-        Foreman.Application.settings.bind ("spawn-protection", spawn_protection_entry, "value", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("spawn-protection", spawn_protection_entry, "value", GLib.SettingsBindFlags.DEFAULT);
 
         var main_grid = new Gtk.Grid () {
             margin_start = 10,

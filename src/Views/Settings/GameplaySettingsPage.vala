@@ -39,7 +39,7 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
         game_mode_button.append_text (Foreman.Models.GameMode.CREATIVE.get_display_string ());
         game_mode_button.append_text (Foreman.Models.GameMode.ADVENTURE.get_display_string ());
         game_mode_button.append_text (Foreman.Models.GameMode.SPECTATOR.get_display_string ());
-        Foreman.Application.settings.bind ("gamemode", game_mode_button, "selected", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("gamemode", game_mode_button, "selected", GLib.SettingsBindFlags.DEFAULT);
 
         var force_game_mode_label = new Gtk.Label (_("Force game mode:")) {
             halign = Gtk.Align.END
@@ -48,7 +48,7 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("force-gamemode", force_game_mode_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("force-gamemode", force_game_mode_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         allow_flight_label = new Gtk.Label (_("Allow flight:")) {
             halign = Gtk.Align.END
@@ -57,7 +57,7 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("allow-flight", allow_flight_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("allow-flight", allow_flight_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         var difficulty_header_label = new Granite.HeaderLabel (_("Difficulty"));
 
@@ -68,7 +68,7 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
         difficulty_button.append_text (Foreman.Models.Difficulty.EASY.get_display_string ());
         difficulty_button.append_text (Foreman.Models.Difficulty.NORMAL.get_display_string ());
         difficulty_button.append_text (Foreman.Models.Difficulty.HARD.get_display_string ());
-        Foreman.Application.settings.bind ("difficulty", difficulty_button, "selected", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("difficulty", difficulty_button, "selected", GLib.SettingsBindFlags.DEFAULT);
 
         var hardcore_label = new Gtk.Label (_("Hardcore:")) {
             halign = Gtk.Align.END
@@ -77,7 +77,7 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("hardcore", hardcore_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("hardcore", hardcore_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         var pvp_label = new Gtk.Label (_("Enable PvP:")) {
             halign = Gtk.Align.END
@@ -86,7 +86,7 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("pvp", pvp_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("pvp", pvp_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         var resource_pack_header_label = new Granite.HeaderLabel (_("Resource Pack"));
 
@@ -95,16 +95,16 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
         };
         resource_pack_file_entry.file_set.connect (() => {
             update_resource_pack_required_sensitivity ();
-            Foreman.Application.settings.set_string ("resource-pack", resource_pack_file_entry.get_uri ());
+            Foreman.Application.java_server_preferences.set_string ("resource-pack", resource_pack_file_entry.get_uri ());
         });
         var remove_resource_pack_button = new Gtk.Button.with_label (_("Remove"));
         remove_resource_pack_button.clicked.connect (() => {
             resource_pack_file_entry.unselect_all ();
             require_resource_pack_switch.set_active (false);
             update_resource_pack_required_sensitivity ();
-            Foreman.Application.settings.set_string ("resource-pack", "");
+            Foreman.Application.java_server_preferences.set_string ("resource-pack", "");
         });
-        resource_pack_file_entry.set_uri (Foreman.Application.settings.get_string ("resource-pack"));
+        resource_pack_file_entry.set_uri (Foreman.Application.java_server_preferences.get_string ("resource-pack"));
         var resource_pack_grid = new Gtk.Grid () {
             margin = 12,
             hexpand = true,
@@ -120,13 +120,13 @@ public class Foreman.Views.Settings.GameplaySettingsPage : Granite.SimpleSetting
             halign = Gtk.Align.START,
             valign = Gtk.Align.CENTER
         };
-        Foreman.Application.settings.bind ("require-resource-pack", require_resource_pack_switch, "active", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("require-resource-pack", require_resource_pack_switch, "active", GLib.SettingsBindFlags.DEFAULT);
 
         resource_pack_prompt_label = new Gtk.Label (_("Prompt:")) {
             halign = Gtk.Align.END
         };
         resource_pack_prompt_entry = new Gtk.Entry ();
-        Foreman.Application.settings.bind ("resource-pack-prompt", resource_pack_prompt_entry, "text", GLib.SettingsBindFlags.DEFAULT);
+        Foreman.Application.java_server_preferences.bind ("resource-pack-prompt", resource_pack_prompt_entry, "text", GLib.SettingsBindFlags.DEFAULT);
 
         var main_grid = new Gtk.Grid () {
             margin_start = 10,

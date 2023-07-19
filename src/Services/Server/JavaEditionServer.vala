@@ -6,6 +6,7 @@
 public class Foreman.Services.JavaEditionServer : Foreman.Services.Server<Foreman.Models.JavaLogMessage> {
 
     private const string STARTUP_CMD = "java -Xmx1024M -Xms1024M -jar server.jar nogui"; // TODO: Tune JVM settings
+    private const uint DEFAULT_PORT = 25565;
 
     public JavaEditionServer (string name, string server_version) {
         this.new_for_context (new Foreman.Services.Server.Context.new_for_version (name, Foreman.Models.ServerType.JAVA_EDITION, server_version));

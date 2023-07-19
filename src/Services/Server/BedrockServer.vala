@@ -6,6 +6,7 @@
 public class Foreman.Services.BedrockServer : Foreman.Services.Server<Foreman.Models.BedrockLogMessage> {
 
     private const string STARTUP_CMD = "./bedrock_server";
+    private const uint DEFAULT_PORT = 19132;
 
     public BedrockServer (string name, string server_version) {
         this.new_for_context (new Foreman.Services.Server.Context.new_for_version (name, Foreman.Models.ServerType.BEDROCK, server_version));

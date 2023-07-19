@@ -46,7 +46,9 @@
       <summary>The current version of the server to use</summary>
       <description>The current version of the server to use</description>
     </key>
-    <!-- Default properties for a server -->
+  </schema>
+  <schema path="@schema-path@" id="@appid@.java">
+    <!-- Default properties for a Java Edition server -->
     <!-- See: https://minecraft.fandom.com/wiki/Server.properties -->
     <key name="allow-flight" type="b">
       <default>false</default>
@@ -328,6 +330,144 @@
       <default>false</default>
       <summary>Enables a whitelist on the server.</summary>
       <description>With a whitelist enabled, users not on the whitelist cannot connect.</description>
+    </key>
+  </schema>
+  <!-- Default properties for a Bedrock Edition server -->
+  <schema path="@schema-path@" id="@appid@.bedrock">
+    <key name="server-name" type="s">
+      <default>"Dedicated Server"</default>
+      <summary>The server name.</summary>
+      <description>The server name.</description>
+    </key>
+    <key name="gamemode" type="i">
+      <default>0</default>
+      <summary>Defines the mode of gameplay.</summary>
+      <description>Defines the mode of gameplay.</description>
+    </key>
+    <key name="force-gamemode" type="b">
+      <default>false</default>
+      <summary>Force players to join in the default game mode.</summary>
+      <description>Force players to join in the default game mode.</description>
+    </key>
+    <key name="difficulty" type="i">
+      <default>1</default>
+      <summary>Defines the difficulty (such as damage dealt by mobs and the way hunger and poison affects players) of the server.</summary>
+      <description>Defines the difficulty (such as damage dealt by mobs and the way hunger and poison affects players) of the server.</description>
+    </key>
+    <key name="allow-cheats" type="b">
+      <default>false</default>
+      <summary>If cheats like commands can be used.</summary>
+      <description>If cheats like commands can be used.</description>
+    </key>
+    <key name="max-players" type="i">
+      <default>10</default>
+      <summary>The maximum number of players that can play on the server at the same time.</summary>
+      <description>The maximum number of players that can play on the server at the same time.</description>
+    </key>
+    <key name="online-mode" type="b">
+      <default>true</default>
+      <summary>Server checks connecting players against Minecraft account database.</summary>
+      <description>Server checks connecting players against Minecraft account database.</description>
+    </key>
+    <key name="allow-list" type="b">
+      <default>false</default>
+      <summary>Whether or not all connected players must be listed in the allowlist.json file.</summary>
+      <description>Whether or not all connected players must be listed in the allowlist.json file.</description>
+    </key>
+    <key name="server-port" type="i">
+      <default>19132</default>
+      <summary>Changes the IPv4 port the server is hosting (listening) on.</summary>
+      <description>Changes the IPv4 port the server is hosting (listening) on.</description>
+    </key>
+    <key name="server-portv6" type="i">
+      <default>19133</default>
+      <summary>Changes the IPv6 port the server is hosting (listening) on.</summary>
+      <description>Changes the IPv6 port the server is hosting (listening) on.</description>
+    </key>
+    <key name="view-distance" type="i">
+      <default>32</default>
+      <summary>Sets the amount of world data the server sends the client, measured in chunks in each direction of the player (radius, not diameter).</summary>
+      <description>It determines the server-side viewing distance.</description>
+    </key>
+    <key name="tick-distance" type="i">
+      <default>4</default>
+      <summary>The world will be ticked this many chunks away from the player.</summary>
+      <description>The world will be ticked this many chunks away from the player.</description>
+    </key>
+    <key name="player-idle-timeout" type="i">
+      <default>30</default>
+      <summary>If non-zero, players are kicked from the server if they are idle for more than that many minutes.</summary>
+      <description>If non-zero, players are kicked from the server if they are idle for more than that many minutes.</description>
+    </key>
+    <key name="max-threads" type="i">
+      <default>8</default>
+      <summary>Maximum number of threads the server will try to use. If set to 0 or removed then it will use as many as possible.</summary>
+      <description>Maximum number of threads the server will try to use. If set to 0 or removed then it will use as many as possible.</description>
+    </key>
+    <key name="level-name" type="s">
+      <default>"Bedrock level"</default>
+      <summary>The "level-name" value is used as the world name and its folder name.</summary>
+      <description>The player may also copy their saved game folder here, and change the name to the same as that folder's to load it instead.</description>
+    </key>
+    <key name="level-seed" type="s">
+      <default>""</default>
+      <summary>Sets a world seed for the player's world, as in Singleplayer.</summary>
+      <description>The world generates with a random seed if left blank.</description>
+    </key>
+    <key name="default-player-permission-level" type="s">
+      <default>"member"</default>
+      <summary>Permission level for new players joining for the first time.</summary>
+      <description>Permission level for new players joining for the first time.</description>
+    </key>
+    <key name="texturepack-required" type="b">
+      <default>false</default>
+      <summary>Force clients to use texture packs in the current world.</summary>
+      <description>Force clients to use texture packs in the current world.</description>
+    </key>
+    <key name="content-log-file-enabled" type="b">
+      <default>false</default>
+      <summary>Enables logging content errors to a file.</summary>
+      <description>Enables logging content errors to a file.</description>
+    </key>
+    <key name="compression-threshold" type="i">
+      <default>1</default>
+      <summary>Determines the smallest size of raw network payload to compress.</summary>
+      <description>Determines the smallest size of raw network payload to compress.</description>
+    </key>
+    <key name="server-authoritative-movement" type="s">
+      <default>"server-auth"</default>
+      <summary>Enables server authoritative movement.</summary>
+      <description>Enables server authoritative movement.</description>
+    </key>
+    <key name="player-movement-score-threshold" type="i">
+      <default>20</default>
+      <summary>The number of incongruent time intervals needed before abnormal behavior is reported.</summary>
+      <description>The number of incongruent time intervals needed before abnormal behavior is reported.</description>
+    </key>
+    <key name="player-movement-action-direction-threshold" type="d">
+      <default>0.85</default>
+      <summary>The amount that the player's attack direction and look direction can differ.</summary>
+      <description>The amount that the player's attack direction and look direction can differ.</description>
+    </key>
+    <key name="player-movement-distance-threshold" type="d">
+      <default>0.3</default>
+      <summary>The difference between server and client positions that needs to be exceeded before abnormal behavior is detected.</summary>
+      <description>The difference between server and client positions that needs to be exceeded before abnormal behavior is detected.</description>
+    </key>
+    <key name="player-movement-duration-threshold-in-ms" type="i">
+      <default>500</default>
+      <summary>The duration of time the server and client positions can be out of sync before abnormal behavior is detected.</summary>
+      <description>The duration of time the server and client positions can be out of sync before abnormal behavior is detected.</description>
+    </key>
+    <key name="correct-player-movement" type="b">
+      <default>false</default>
+      <summary>If true, the client position will get corrected to the server position if the movement score exceeds the threshold.</summary>
+      <description>If true, the client position will get corrected to the server position if the movement score exceeds the threshold.</description>
+    </key>
+    <key name="server-authoritative-block-breaking" type="b">
+      <default>false</default>
+      <summary>If true, the server will compute block mining operations in sync with the client so it can verify that the client should be able to break blocks when it thinks it can.</summary>
+      <description>If true, the server will compute block mining operations in sync with the client so it can verify that the client should be able to break blocks when it thinks it can.</description>
     </key>
   </schema>
 </schemalist>

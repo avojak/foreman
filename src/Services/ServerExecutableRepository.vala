@@ -32,7 +32,7 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
     }
 
     construct {
-        // Establish the directory for Java Edition server executables if not already present
+        // Establish the directory for server executables if not already present
         var java_server_executable_dir = GLib.File.new_for_path (java_server_executable_dir_path);
         if (!java_server_executable_dir.query_exists ()) {
             try {
@@ -63,17 +63,7 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
                 downloaded_bedrock_executables.set (executable.version, executable);
             }
         }
-        //  try {
-        //      GLib.FileEnumerator enumerator = server_executable_dir.enumerate_children (GLib.FileAttribute.STANDARD_NAME, GLib.FileQueryInfoFlags.NONE);
-        //      for (GLib.FileInfo? info = enumerator.next_file (); info != null; info = enumerator.next_file ()) {
-        //          var executable_directory = GLib.File.new_for_path (GLib.Path.build_filename (server_executable_dir.get_path (), info.get_name ()));
-        //          if (executable_directory.query_file_type (GLib.FileQueryInfoFlags.NONE) == GLib.FileType.DIRECTORY) {
-        //              downloaded_java_executables.set (info.get_name (), executable_directory);
-        //          }
-        //      }
-        //  } catch (GLib.Error e) {
-        //      warning (e.message);
-        //  }
+
         debug ("Downloaded Java server versions: %s", downloaded_java_executables.size == 0 ? "none" : string.joinv (", ", downloaded_java_executables.keys.to_array ()));
         debug ("Downloaded Bedrock server versions: %s", downloaded_bedrock_executables.size == 0 ? "none" : string.joinv (", ", downloaded_bedrock_executables.keys.to_array ()));
     }
@@ -108,23 +98,23 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
         return downloaded;
     }
 
-    public string? get_latest_downloaded_release_version () {
-        var versions = new Gee.ArrayList<SemVer.Version> ();
-        foreach (var entry in downloaded_java_executables) {
-            try {
-                versions.add (new SemVer.Version.from_string (entry.key));
-            } catch (SemVer.VersionParseError e) {
-                warning (e.message);
-            }
-        }
-        if (versions.size == 0) {
-            return null;
-        }
-        versions.sort ((a, b) => {
-            return a.compare_to (b);
-        });
-        return versions.get (0).to_string ();
-    }
+    //  public string? get_latest_downloaded_release_version () {
+    //      var versions = new Gee.ArrayList<SemVer.Version> ();
+    //      foreach (var entry in downloaded_java_executables) {
+    //          try {
+    //              versions.add (new SemVer.Version.from_string (entry.key));
+    //          } catch (SemVer.VersionParseError e) {
+    //              warning (e.message);
+    //          }
+    //      }
+    //      if (versions.size == 0) {
+    //          return null;
+    //      }
+    //      versions.sort ((a, b) => {
+    //          return a.compare_to (b);
+    //      });
+    //      return versions.get (0).to_string ();
+    //  }
 
     public async void refresh () {
         GLib.SourceFunc callback = refresh.callback;
@@ -229,14 +219,13 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
 
                 if (!unpack_java_server_executable (server_file)) {
                     // TODO: Error
+                    warning ("Failed to unpack Java server exectuable");
                     downloaded_java_executables.unset (version);
                     sql_client.remove_java_server_executable (version);
                     return;
                 }
 
                 dialog.close ();
-            } else {
-                // TODO: Error
             }
             Idle.add ((owned) callback);
         });
@@ -265,12 +254,6 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
                     return false;
                 });
             });
-            //  context.complete.connect (() => {
-            //      Idle.add (() => {
-            //          dialog.close ();
-            //          return false;
-            //      });
-            //  });
 
             Foreman.Utils.HttpUtils.download_file (context, cancellable);
 
@@ -314,36 +297,35 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
         return true;
     }
 
-    public void copy_template (Foreman.Models.ServerType server_type, string version, GLib.File target) {
-        GLib.File template_dir;
-        switch (server_type) {
-            case JAVA_EDITION:
-                template_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, java_server_executable_dir_path, version));
-                break;
-            case BEDROCK:
-                template_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, bedrock_server_executable_dir_path, version));
-                break;
-            default:
-                assert_not_reached ();
-        }
+    /**
+     * Copies the template directory for a Java server to the target location.
+     */
+    public void copy_java_template (string version, GLib.File target) {
+        copy_template (version, target, java_server_executable_dir_path);
+    }
+
+    /**
+     * Copies the template directory for a Bedrock server to the target location.
+     */
+    public void copy_bedrock_template (string version, GLib.File target) {
+        copy_template (version, target, bedrock_server_executable_dir_path);
+    }
+
+    /**
+     * Copies the template directory for a server to the target location.
+     */
+    private void copy_template (string version, GLib.File target, string executable_dir_path) {
+        var template_dir = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, executable_dir_path, version));
         try {
-            //  template_dir.copy (target, GLib.FileCopyFlags.OVERWRITE, null, null);
             Foreman.Utils.FileUtils.copy_recursive (template_dir, target, GLib.FileCopyFlags.OVERWRITE, null);
         } catch (GLib.Error e) {
             warning (e.message);
         }
-
-        if (server_type == Foreman.Models.ServerType.BEDROCK) {
-            var wrapper = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, Constants.PKG_DATA_DIR, "bedrock-wrapper.sh"));
-            var wrapper_target = GLib.File.new_for_path (GLib.Path.build_path (GLib.Path.DIR_SEPARATOR_S, target.get_path (), "bedrock-wrapper.sh"));
-            try {
-                wrapper.copy (wrapper_target, GLib.FileCopyFlags.OVERWRITE);
-            } catch (GLib.Error e) {
-                warning (e.message);
-            }
-        }
     }
 
+    /**
+     * Parse the content of the download page to get the latest version.
+     */
     public string? get_latest_available_bedrock_version () {
         string? html = null;
         try {
@@ -392,15 +374,20 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
 
                 if (!unpack_bedrock_server_archive (server_archive)) {
                     // TODO: Error
+                    warning ("Failed to unpack Bedrock server archive");
                     downloaded_bedrock_executables.unset (version);
                     sql_client.remove_bedrock_server_executable (version);
                     return;
                 }
-                server_archive.delete_async ();
+                server_archive.delete_async.begin (GLib.Priority.DEFAULT, cancellable, (obj, res) => {
+                    try {
+                        server_archive.delete_async.end (res);
+                    } catch (GLib.Error e) {
+                        warning ("Error deleting downloaded Bedrock server archive: %s", e.message);
+                    }
+                });
 
                 dialog.close ();
-            } else {
-                // TODO: Error
             }
             Idle.add ((owned) callback);
         });
@@ -422,12 +409,6 @@ public class Foreman.Services.ServerExecutableRepository : GLib.Object {
                     return false;
                 });
             });
-            //  context.complete.connect (() => {
-            //      Idle.add (() => {
-            //          dialog.close ();
-            //          return false;
-            //      });
-            //  });
 
             Foreman.Utils.HttpUtils.download_file (context, cancellable);
 

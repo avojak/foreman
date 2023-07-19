@@ -137,6 +137,9 @@ public class Foreman.Layouts.MainLayout : Gtk.Grid {
         page.command_to_send.connect ((command) => {
             command_to_send (server_context, command);
         });
+        page.address_link_clicked.connect ((port) => {
+            window.show_server_address_dialog (port);
+        });
 
         // Add the view to the stack
         server_details_stack.add_named (page, server_context.uuid);

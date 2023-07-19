@@ -75,6 +75,7 @@ public abstract class Foreman.Services.Server<T> : GLib.Object {
         public GLib.File server_directory { get; set; }
         public State state { get; set; }
         public Foreman.Models.ServerType server_type { get; set; }
+        //  public uint? port { get; set; }
 
         public Context.new_for_version (string name, Foreman.Models.ServerType server_type, string server_version) {
             this.new_for_uuid (name, server_type, server_version, GLib.Uuid.string_random ());
@@ -218,7 +219,6 @@ public abstract class Foreman.Services.Server<T> : GLib.Object {
     }
 
     private void handle_stdout (string line) {
-        //  print ("stdout: %s\n", line.strip ());
         foreach (var handler in log_handlers) {
             if (!handler.handle (create_log_message (line), Foreman.Services.LogHandler.Source.STDOUT)) {
                 return;
@@ -227,7 +227,6 @@ public abstract class Foreman.Services.Server<T> : GLib.Object {
     }
 
     private void handle_stderr (string line) {
-        //  print ("stderr: %s\n", line.strip ());
         foreach (var handler in log_handlers) {
             if (!handler.handle (create_log_message (line), Foreman.Services.LogHandler.Source.STDERR)) {
                 return;
@@ -238,7 +237,6 @@ public abstract class Foreman.Services.Server<T> : GLib.Object {
     public void stop () {
         stopping ();
         cancellable.cancel ();
-        // TODO: Send /stop command instead
         if (process != null) {
             //  process.send_signal (GLib.ProcessSignal.INT);
             send_command ("stop");

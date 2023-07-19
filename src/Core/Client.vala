@@ -10,14 +10,15 @@ public class Foreman.Core.Client : GLib.Object {
         return instance.once (() => { return new Foreman.Core.Client (); });
     }
 
-    //  public Foreman.Services.ServerDownloadService server_download_service;
     public Foreman.Services.ServerExecutableRepository server_executable_repository;
     public Foreman.Services.JavaExecutionService java_execution_service;
     public Foreman.Services.ServerRepository server_repository;
     public Foreman.Services.ServerManager server_manager;
 
+    public string? private_ip_addr { get; private set; }
+    public string? public_ip_addr { get; private set; }
+
     construct {
-        //  server_download_service = Foreman.Services.ServerDownloadService.get_default ();
         server_executable_repository = Foreman.Services.ServerExecutableRepository.get_default ();
         java_execution_service = Foreman.Services.JavaExecutionService.get_default ();
         server_repository = Foreman.Services.ServerRepository.get_default ();
@@ -31,6 +32,9 @@ public class Foreman.Core.Client : GLib.Object {
         //  server_manager.server_startup_failed.connect (server_repository.on_server_state_changed);
         //  server_manager.server_errored.connect (server_repository.on_server_state_changed);
         server_manager.server_deleted.connect (server_repository.on_server_deleted);
+
+        private_ip_addr = Foreman.Utils.NetUtils.get_private_ip_addr ();
+        public_ip_addr = Foreman.Utils.NetUtils.get_public_ip_addr ();
     }
 
 }

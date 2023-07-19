@@ -11,6 +11,8 @@ public class Foreman.Application : Gtk.Application {
     }
 
     public static GLib.Settings settings;
+    public static GLib.Settings java_server_preferences;
+    public static GLib.Settings bedrock_server_preferences;
 
     private Foreman.Windows.MainWindow main_window;
 
@@ -28,6 +30,8 @@ public class Foreman.Application : Gtk.Application {
 
     construct {
         settings = new GLib.Settings (Constants.APP_ID);
+        java_server_preferences = new GLib.Settings (Constants.APP_ID + ".java");
+        bedrock_server_preferences = new GLib.Settings (Constants.APP_ID + ".bedrock");
         startup.connect ((handler) => {
             Hdy.init ();
         });

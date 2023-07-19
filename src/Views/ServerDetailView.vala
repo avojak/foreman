@@ -145,6 +145,8 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
     }
 
     private void create_menu (Gtk.MenuButton button) {
+        //  var connection_help_
+
         var configure_accellabel = new Granite.AccelLabel.from_action_name (
             _("Configure…"),
             Foreman.Services.ActionManager.ACTION_PREFIX + Foreman.Services.ActionManager.ACTION_CONFIGURE_SELECTED_SERVER
@@ -174,11 +176,11 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
             orientation = Gtk.Orientation.VERTICAL,
             width_request = 200
         };
-        //  popover_grid.attach (configure_menu_item, 0, 0);
-        //  popover_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
-        //      margin_top = 0
-        //  }, 0, 1);
-        popover_grid.attach (delete_menu_item, 0, 0);
+        popover_grid.attach (configure_menu_item, 0, 0);
+        popover_grid.attach (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
+            margin_top = 0
+        }, 0, 1);
+        popover_grid.attach (delete_menu_item, 0, 2);
         popover_grid.show_all ();
 
         var popover = new Gtk.Popover (null);
@@ -196,6 +198,11 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
             tooltip_text = label,
             width_request = 100 // Make the button a bit larger for emphasis
         };
+    }
+
+    private bool on_address_link_clicked () {
+        address_link_clicked (25565); // TODO: Get real value
+        return true;
     }
 
     public void starting () {
@@ -219,9 +226,11 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
             //  foreach (var ip in Foreman.Utils.NetUtils.get_private_ip_addrs ()) {
             //      debug (ip);
             //  }
-            var ip = "127.0.0.1"; // Foreman.Utils.NetUtils.get_public_ip_addr ();
             // TODO: Maybe just use private IP only for now? Or show a dropdown with the various IPs?
-            address_value.set_text (@"$ip:25565"); // TODO: Get the real value
+            var private_ip_addr = Foreman.Core.Client.get_default ().private_ip_addr;
+            var public_ip_addr = Foreman.Core.Client.get_default ().public_ip_addr;
+            var address = @"$private_ip_addr:25565"; // TODO: Get the real port value
+            address_value.set_label (address);
             players_value.set_text ("0");
             log_output.set_accept_input (true);
             return GLib.Source.REMOVE;
@@ -373,5 +382,6 @@ public class Foreman.Views.ServerDetailView : Granite.SimpleSettingsPage {
     //  public signal void delete_button_clicked ();
     //  public signal void configure_button_clicked ();
     public signal void command_to_send (string command);
+    public signal void address_link_clicked (uint port);
 
 }
